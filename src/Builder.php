@@ -4,7 +4,7 @@ namespace PHPCensor;
 
 use DateTime;
 use Exception;
-use PHPCensor\Helper\BuildInterpolator;
+use PHPCensor\Common\PathResolver;
 use PHPCensor\Helper\MailerFactory;
 use PHPCensor\Logging\BuildLogger;
 use PHPCensor\Model\Build;
@@ -13,6 +13,7 @@ use PHPCensor\Plugin\Util\Factory as PluginFactory;
 use PHPCensor\Store\BuildErrorWriter;
 use PHPCensor\Store\BuildStore;
 use PHPCensor\Store\Factory;
+use PHPCensor\Store\ProjectStore;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -78,9 +79,14 @@ class Builder implements LoggerAwareInterface
     protected $lastOutput;
 
     /**
-     * @var BuildInterpolator
+     * @var VariableInterpolator
      */
-    protected $interpolator;
+    protected $variableInterpolator;
+
+    /**
+     * @var PathResolver
+     */
+    protected $pathResolver;
 
     /**
      * @var BuildStore
@@ -129,7 +135,6 @@ class Builder implements LoggerAwareInterface
             $this->verbose
         );
 
-        $this->interpolator     = new BuildInterpolator();
         $this->buildErrorWriter = new BuildErrorWriter($this->build->getProjectId(), $this->build->getId());
     }
 
@@ -392,7 +397,7 @@ class Builder implements LoggerAwareInterface
      */
     public function interpolate($input)
     {
-        return $this->interpolator->interpolate($input);
+        return $this->variableInterpolator->interpolate($input);
     }
 
     /**
@@ -417,48 +422,12 @@ class Builder implements LoggerAwareInterface
 
         chdir($this->buildPath);
 
-        $this->interpolator->setupInterpolationVars(
-            $this->build,
-            APP_URL
-        );
+        /** @var ProjectStore $projectStore */
+        $projectStore = Factory::getStore('Project');
+        $project      = $projectStore->getById($this->build->getProjectId());
 
-        // Does the project's .php-censor.yml request verbose mode?
-        if (!isset($this->config['build_settings']['verbose']) || !$this->config['build_settings']['verbose']) {
-            $this->verbose = false;
-        }
-
-        // Does the project have any paths it wants plugins to ignore?
-        if (!empty($this->config['build_settings']['ignore'])) {
-            $this->ignore = $this->config['build_settings']['ignore'];
-        }
-
-        if (!empty($this->config['build_settings']['binary_path'])) {
-            $this->binaryPath = rtrim(
-                $this->interpolate($this->config['build_settings']['binary_path']),
-                '/\\'
-            ) . '/';
-        }
-
-        if (!empty($this->config['build_settings']['priority_path']) &&
-            in_array(
-                $this->config['build_settings']['priority_path'],
-                Plugin::AVAILABLE_PRIORITY_PATHS,
-                true
-            )) {
-            $this->priorityPath = $this->config['build_settings']['priority_path'];
-        }
-
-        $directory = $this->buildPath;
-
-        // Does the project have a global directory for plugins ?
-        if (!empty($this->config['build_settings']['directory'])) {
-            $directory = $this->config['build_settings']['directory'];
-        }
-
-        $this->directory = rtrim(
-            $this->interpolate($directory),
-            '/\\'
-        ) . '/';
+        $this->variableInterpolator = new VariableInterpolator($this->build, $project, APP_URL);
+        $this->pathResolver         = new PathResolver($this->build, $this->buildLogger, $this->variableInterpolator, $this->config);
 
         $this->buildLogger->logSuccess(sprintf('Working copy created: %s', $this->buildPath));
 

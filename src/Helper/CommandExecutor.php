@@ -5,6 +5,7 @@ namespace PHPCensor\Helper;
 use Exception;
 use PHPCensor\Logging\BuildLogger;
 use Symfony\Component\Process\Process;
+use PHPCensor\Common\CommandExecutorInterface;
 
 /**
  * Handles running system commands with variables.
@@ -31,10 +32,7 @@ class CommandExecutor implements CommandExecutorInterface
      */
     protected $lastError;
 
-    /**
-     * @var bool
-     */
-    public $logExecOutput = true;
+    private $commandOutputEnabled = true;
 
     /**
      * The path which findBinary will look in.
@@ -86,14 +84,24 @@ class CommandExecutor implements CommandExecutorInterface
         $this->rootDir    = $rootDir;
     }
 
+    public function enableCommandOutput()
+    {
+        $this->commandOutputEnabled = true;
+    }
+
+    public function disableCommandOutput()
+    {
+        $this->commandOutputEnabled = false;
+    }
+
     /**
      * Executes shell commands.
      *
-     * @param array $args
+     * @param array ...$args
      *
      * @return bool Indicates success
      */
-    public function executeCommand($args = [])
+    public function executeCommand(array ...$args): bool
     {
         $this->lastOutput = [];
 
@@ -150,7 +158,7 @@ class CommandExecutor implements CommandExecutorInterface
         $this->lastOutput = array_filter(explode(PHP_EOL, $lastOutput));
         $this->lastError  = $lastError;
 
-        $shouldOutput = ($this->logExecOutput && ($this->verbose || 0 !== $status));
+        $shouldOutput = ($this->commandOutputEnabled && ($this->verbose || 0 !== $status));
 
         if ($shouldOutput && !empty($this->lastOutput)) {
             $this->logger->log($this->lastOutput);
@@ -190,7 +198,7 @@ class CommandExecutor implements CommandExecutorInterface
      *
      * @return string
      */
-    public function getLastOutput()
+    public function getLastCommandOutput(): string
     {
         return implode(PHP_EOL, $this->lastOutput);
     }
@@ -277,7 +285,7 @@ class CommandExecutor implements CommandExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function findBinary($binary, $priorityPath = 'local', $binaryPath = '', $binaryName = [])
+    public function findBinary(array $binary, string $priorityPath = 'local', string $binaryPath = '', array $binaryName = []): string
     {
         $composerBin = $this->getComposerBinDir($this->buildPath);
 

@@ -6,6 +6,7 @@ use DateTime;
 use DirectoryIterator;
 use Exception;
 use PHPCensor\Builder;
+use PHPCensor\Common\Build\BuildInterface;
 use PHPCensor\Exception\HttpException;
 use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Helper\Lang;
@@ -22,7 +23,7 @@ use Symfony\Component\Yaml\Parser as YamlParser;
 /**
  * @author Dan Cryer <dan@block8.co.uk>
  */
-class Build extends BaseBuild
+class Build extends BaseBuild implements BuildInterface
 {
     const STAGE_SETUP    = 'setup';
     const STAGE_TEST     = 'test';
@@ -138,7 +139,7 @@ class Build extends BaseBuild
     /**
     * Get link to commit from another source (i.e. Github)
     */
-    public function getCommitLink()
+    public function getCommitLink(): string
     {
         return '#';
     }
@@ -146,7 +147,7 @@ class Build extends BaseBuild
     /**
     * Get link to branch from another source (i.e. Github)
     */
-    public function getBranchLink()
+    public function getBranchLink(): string
     {
         return '#';
     }
@@ -220,7 +221,7 @@ class Build extends BaseBuild
     /**
      * Is this build successful?
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return ($this->getStatus() === self::STATUS_SUCCESS);
     }
@@ -401,7 +402,7 @@ class Build extends BaseBuild
     /**
      * @return string|null
      */
-    public function getBuildDirectory()
+    public function getBuildDirectory(): string
     {
         if (!$this->getId()) {
             return null;
@@ -424,7 +425,7 @@ class Build extends BaseBuild
     /**
      * @return string|null
      */
-    public function getBuildBranchDirectory()
+    public function getBuildBranchDirectory(): string
     {
         if (!$this->getId()) {
             return null;
@@ -447,7 +448,7 @@ class Build extends BaseBuild
     /**
      * @return string|null
      */
-    public function getBuildPath()
+    public function getBuildPath(): string
     {
         if (!$this->getId()) {
             return null;

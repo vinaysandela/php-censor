@@ -26,7 +26,7 @@ class CommandExecutorTest extends TestCase
     public function testGetLastOutput_ReturnsOutputOfCommand()
     {
         $this->testedExecutor->executeCommand(['echo "%s"', 'Hello World']);
-        $output = $this->testedExecutor->getLastOutput();
+        $output = $this->testedExecutor->getLastCommandOutput();
         self::assertEquals("Hello World", $output);
     }
 
@@ -34,7 +34,7 @@ class CommandExecutorTest extends TestCase
     {
         $this->testedExecutor->executeCommand(['echo "%s"', 'Hello World']);
         $this->testedExecutor->executeCommand(['echo "%s"', 'Hello Tester']);
-        $output = $this->testedExecutor->getLastOutput();
+        $output = $this->testedExecutor->getLastCommandOutput();
         self::assertEquals("Hello Tester", $output);
     }
 

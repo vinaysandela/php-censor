@@ -3,6 +3,7 @@
 namespace PHPCensor\Logging;
 
 use Exception;
+use PHPCensor\Common\Build\BuildLoggerInterface;
 use PHPCensor\Model\Build;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -11,7 +12,7 @@ use Psr\Log\LogLevel;
 /**
  * Class BuildLogger
  */
-class BuildLogger implements LoggerAwareInterface
+class BuildLogger implements LoggerAwareInterface, BuildLoggerInterface
 {
     /**
      * @var LoggerInterface
@@ -61,11 +62,19 @@ class BuildLogger implements LoggerAwareInterface
     }
 
     /**
+     * @param string $message
+     */
+    public function logNormal(string $message)
+    {
+        $this->log($message);
+    }
+
+    /**
      * Add a warning-coloured message to the log.
      *
      * @param string $message
      */
-    public function logWarning($message)
+    public function logWarning(string $message)
     {
         $this->log("\033[0;31m" . $message . "\033[0m");
     }
@@ -75,7 +84,7 @@ class BuildLogger implements LoggerAwareInterface
      *
      * @param string $message
      */
-    public function logSuccess($message)
+    public function logSuccess(string $message)
     {
         $this->log("\033[0;32m" . $message . "\033[0m");
     }
@@ -86,7 +95,7 @@ class BuildLogger implements LoggerAwareInterface
      * @param string     $message
      * @param Exception $exception The exception that caused the error.
      */
-    public function logFailure($message, Exception $exception = null)
+    public function logFailure(string $message, ?\Exception $exception = null)
     {
         $level   = LogLevel::INFO;
         $context = [];
@@ -108,7 +117,7 @@ class BuildLogger implements LoggerAwareInterface
      *
      * @param string $message
      */
-    public function logDebug($message)
+    public function logDebug(string $message)
     {
         if ($this->build->isDebug()) {
             $this->log("\033[0;36m" . $message . "\033[0m", LogLevel::DEBUG);

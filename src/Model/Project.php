@@ -2,6 +2,7 @@
 
 namespace PHPCensor\Model;
 
+use PHPCensor\Common\Project\ProjectInterface;
 use PHPCensor\Model\Base\Project as BaseProject;
 use PHPCensor\Store\EnvironmentStore;
 use PHPCensor\Store\Factory;
@@ -12,7 +13,7 @@ use Symfony\Component\Yaml\Parser as YamlParser;
 /**
  * @author Dan Cryer <dan@block8.co.uk>
  */
-class Project extends BaseProject
+class Project extends BaseProject implements ProjectInterface
 {
     /**
      * @return ProjectGroup|null

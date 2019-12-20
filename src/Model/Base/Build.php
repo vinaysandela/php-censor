@@ -274,7 +274,7 @@ class Build extends Model
     /**
      * @return string
      */
-    public function getBranch()
+    public function getBranch(): string
     {
         return $this->data['branch'];
     }
