@@ -3,6 +3,7 @@
 namespace PHPCensor\Helper;
 
 use Exception;
+use PHPCensor\Common\CommandExecutorInterface;
 use PHPCensor\Logging\BuildLogger;
 use Symfony\Component\Process\Process;
 
@@ -34,7 +35,7 @@ class CommandExecutor implements CommandExecutorInterface
     /**
      * @var bool
      */
-    public $logExecOutput = true;
+    private $commandOutputEnabled = true;
 
     /**
      * The path which findBinary will look in.
@@ -87,19 +88,39 @@ class CommandExecutor implements CommandExecutorInterface
     }
 
     /**
-     * Executes shell commands.
-     *
-     * @param array $args
-     *
-     * @return bool Indicates success
+     * {@inheritdoc}
      */
-    public function executeCommand($args = [])
+    public function enableCommandOutput(): void
+    {
+        $this->commandOutputEnabled = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableCommandOutput(): void
+    {
+        $this->commandOutputEnabled = false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEnabledCommandOutput(): bool
+    {
+        return $this->commandOutputEnabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function executeCommand(...$params): bool
     {
         $this->lastOutput = [];
 
-        $this->logger->logDebug('Args: ' . json_encode($args));
+        $this->logger->logDebug('Args: ' . json_encode($params));
 
-        $command = call_user_func_array('sprintf', $args);
+        $command = call_user_func_array('sprintf', $params);
 
         $this->logger->logDebug('Command: ' . $command);
 
@@ -150,7 +171,7 @@ class CommandExecutor implements CommandExecutorInterface
         $this->lastOutput = array_filter(explode(PHP_EOL, $lastOutput));
         $this->lastError  = $lastError;
 
-        $shouldOutput = ($this->logExecOutput && ($this->verbose || 0 !== $status));
+        $shouldOutput = ($this->isEnabledCommandOutput() && ($this->verbose || 0 !== $status));
 
         if ($shouldOutput && !empty($this->lastOutput)) {
             $this->logger->log($this->lastOutput);
@@ -186,11 +207,9 @@ class CommandExecutor implements CommandExecutorInterface
     }
 
     /**
-     * Returns the output from the last command run.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getLastOutput()
+    public function getLastCommandOutput(): string
     {
         return implode(PHP_EOL, $this->lastOutput);
     }
@@ -277,89 +296,83 @@ class CommandExecutor implements CommandExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function findBinary($binary, $priorityPath = 'local', $binaryPath = '', $binaryName = [])
-    {
+    public function findBinary(
+        array $binaryNames,
+        string $binaryPath = ''
+    ): string {
         $composerBin = $this->getComposerBinDir($this->buildPath);
 
-        if (is_string($binary)) {
-            $binary = [$binary];
-        }
-
-        if ($binaryName) {
-            array_unshift($binary, ...$binaryName);
-        }
-
-        foreach ($binary as $bin) {
-            $this->logger->logDebug(sprintf('Looking for binary: %s, priority = %s', $bin, $priorityPath));
+        foreach ($binaryNames as $binary) {
+            $this->logger->logDebug(sprintf('Looking for binary: %s, priority = %s', $binary, $priorityPath));
 
             if ('binary_path' === $priorityPath) {
-                if ($existedBinary = $this->findBinaryByPath($binaryPath, $bin)) {
+                if ($existedBinary = $this->findBinaryByPath($binaryPath, $binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryLocal($composerBin, $bin)) {
+                if ($existedBinary = $this->findBinaryLocal($composerBin, $binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryGlobal($bin)) {
+                if ($existedBinary = $this->findBinaryGlobal($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinarySystem($bin)) {
+                if ($existedBinary = $this->findBinarySystem($binary)) {
                     return $existedBinary;
                 }
             } elseif ('system' === $priorityPath) {
-                if ($existedBinary = $this->findBinarySystem($bin)) {
+                if ($existedBinary = $this->findBinarySystem($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryLocal($composerBin, $bin)) {
+                if ($existedBinary = $this->findBinaryLocal($composerBin, $binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryGlobal($bin)) {
+                if ($existedBinary = $this->findBinaryGlobal($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryByPath($binaryPath, $bin)) {
+                if ($existedBinary = $this->findBinaryByPath($binaryPath, $binary)) {
                     return $existedBinary;
                 }
             } elseif ('global' === $priorityPath) {
-                if ($existedBinary = $this->findBinaryGlobal($bin)) {
+                if ($existedBinary = $this->findBinaryGlobal($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryLocal($composerBin, $bin)) {
+                if ($existedBinary = $this->findBinaryLocal($composerBin, $binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinarySystem($bin)) {
+                if ($existedBinary = $this->findBinarySystem($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryByPath($binaryPath, $bin)) {
+                if ($existedBinary = $this->findBinaryByPath($binaryPath, $binary)) {
                     return $existedBinary;
                 }
             } else {
-                if ($existedBinary = $this->findBinaryLocal($composerBin, $bin)) {
+                if ($existedBinary = $this->findBinaryLocal($composerBin, $binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryGlobal($bin)) {
+                if ($existedBinary = $this->findBinaryGlobal($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinarySystem($bin)) {
+                if ($existedBinary = $this->findBinarySystem($binary)) {
                     return $existedBinary;
                 }
 
-                if ($existedBinary = $this->findBinaryByPath($binaryPath, $bin)) {
+                if ($existedBinary = $this->findBinaryByPath($binaryPath, $binary)) {
                     return $existedBinary;
                 }
             }
         }
 
-        throw new Exception(sprintf('Could not find %s', implode('/', $binary)));
+        throw new Exception(sprintf('Could not find %s', implode('/', $binaryNames)));
     }
 
     /**

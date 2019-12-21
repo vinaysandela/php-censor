@@ -4,7 +4,8 @@ namespace PHPCensor;
 
 use DateTime;
 use Exception;
-use PHPCensor\Helper\BuildInterpolator;
+use PHPCensor\Common\VariableInterpolator;
+use PHPCensor\Common\VariableInterpolatorInterface;
 use PHPCensor\Helper\MailerFactory;
 use PHPCensor\Logging\BuildLogger;
 use PHPCensor\Model\Build;
@@ -13,6 +14,7 @@ use PHPCensor\Plugin\Util\Factory as PluginFactory;
 use PHPCensor\Store\BuildErrorWriter;
 use PHPCensor\Store\BuildStore;
 use PHPCensor\Store\Factory;
+use PHPCensor\Store\ProjectStore;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -78,9 +80,9 @@ class Builder implements LoggerAwareInterface
     protected $lastOutput;
 
     /**
-     * @var BuildInterpolator
+     * @var VariableInterpolatorInterface
      */
-    protected $interpolator;
+    protected $variableInterpolator;
 
     /**
      * @var BuildStore
@@ -129,8 +131,12 @@ class Builder implements LoggerAwareInterface
             $this->verbose
         );
 
-        $this->interpolator     = new BuildInterpolator();
-        $this->buildErrorWriter = new BuildErrorWriter($this->build->getProjectId(), $this->build->getId());
+        /** @var ProjectStore $projectStore */
+        $projectStore = Factory::getStore('Project');
+        $project      = $projectStore->getById($this->build->getProjectId());
+
+        $this->variableInterpolator = new VariableInterpolator($this->build, $project);
+        $this->buildErrorWriter     = new BuildErrorWriter($this->build->getProjectId(), $this->build->getId());
     }
 
     /**
@@ -392,7 +398,7 @@ class Builder implements LoggerAwareInterface
      */
     public function interpolate($input)
     {
-        return $this->interpolator->interpolate($input);
+        return $this->variableInterpolator->interpolate($input);
     }
 
     /**
@@ -417,7 +423,7 @@ class Builder implements LoggerAwareInterface
 
         chdir($this->buildPath);
 
-        $this->interpolator->setupInterpolationVars(
+        $this->variableInterpolator->setupInterpolationVars(
             $this->build,
             APP_URL
         );
