@@ -41,6 +41,7 @@ class Project extends Model
         'type'                   => null,
         'access_information'     => null,
         'build_config'           => null,
+        'periodical_config'      => null,
         'overwrite_build_config' => 1,
         'allow_public_status'    => 0,
         'archived'               => 0,
@@ -309,6 +310,14 @@ class Project extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getPeriodicalConfig()
+    {
+        return $this->data['periodical_config'];
+    }
+
+    /**
      * @param string|null $value
      *
      * @return bool
@@ -322,6 +331,26 @@ class Project extends Model
         $this->data['build_config'] = $value;
 
         return $this->setModified('build_config');
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return bool
+     *
+     * @throws InvalidArgumentException
+     */
+    public function setPeriodicalConfig($value)
+    {
+        $this->validateString('periodical_config', $value);
+
+        if ($this->data['periodical_config'] === $value) {
+            return false;
+        }
+
+        $this->data['periodical_config'] = $value;
+
+        return $this->setModified('periodical_config');
     }
 
     /**
