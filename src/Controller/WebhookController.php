@@ -125,6 +125,7 @@ class WebhookController extends Controller
             }
         }
 
+
         // Check if this branch is to be built.
         if ($project->getDefaultBranchOnly() && ($branch !== $project->getDefaultBranch())) {
             return [
