@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class User extends Model
@@ -25,20 +24,12 @@ class User extends Model
         'remember_key'  => null,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -49,20 +40,12 @@ class User extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->data['email'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setEmail(string $value)
+    public function setEmail(string $value): bool
     {
         if ($this->data['email'] === $value) {
             return false;
@@ -76,17 +59,12 @@ class User extends Model
     /**
      * @return string
      */
-    public function getHash()
+    public function getHash(): string
     {
         return $this->data['hash'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setHash(string $value)
+    public function setHash(string $value): bool
     {
         if ($this->data['hash'] === $value) {
             return false;
@@ -97,20 +75,12 @@ class User extends Model
         return $this->setModified('hash');
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsAdmin()
+    public function getIsAdmin(): bool
     {
         return (bool)$this->data['is_admin'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setIsAdmin(bool $value)
+    public function setIsAdmin(bool $value): bool
     {
         if ($this->data['is_admin'] === (int)$value) {
             return false;
@@ -121,20 +91,12 @@ class User extends Model
         return $this->setModified('is_admin');
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->data['name'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setName(string $value)
+    public function setName(string $value): bool
     {
         if ($this->data['name'] === $value) {
             return false;
@@ -145,20 +107,12 @@ class User extends Model
         return $this->setModified('name');
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->data['language'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setLanguage($value)
+    public function setLanguage(?string $value): bool
     {
         if ($this->data['language'] === $value) {
             return false;
@@ -169,20 +123,12 @@ class User extends Model
         return $this->setModified('language');
     }
 
-    /**
-     * @return int
-     */
-    public function getPerPage()
+    public function getPerPage(): ?int
     {
         return (int)$this->data['per_page'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setPerPage(?int $value)
+    public function setPerPage(?int $value): bool
     {
         if ($this->data['per_page'] === $value) {
             return false;
@@ -193,20 +139,12 @@ class User extends Model
         return $this->setModified('per_page');
     }
 
-    /**
-     * @return string
-     */
-    public function getProviderKey()
+    public function getProviderKey(): string
     {
         return $this->data['provider_key'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setProviderKey(string $value)
+    public function setProviderKey(string $value): bool
     {
         if ($this->data['provider_key'] === $value) {
             return false;
@@ -217,30 +155,24 @@ class User extends Model
         return $this->setModified('provider_key');
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return array|string|null
-     */
-    public function getProviderData($key = null)
+    public function getProviderDataItem(string $key): ?string
     {
-        $data         = json_decode($this->data['provider_data'], true);
-        $providerData = null;
-        if (is_null($key)) {
-            $providerData = $data;
-        } elseif (isset($data[$key])) {
-            $providerData = $data[$key];
+        $data = $this->getProviderData();
+        if (!empty($data[$key])) {
+            return $data[$key];
         }
 
-        return $providerData;
+        return null;
     }
 
-    /**
-     * @param array $value
-     *
-     * @return bool
-     */
-    public function setProviderData(array $value)
+    public function getProviderData(): array
+    {
+        return !empty($this->data['provider_data'])
+            ? \json_decode($this->data['provider_data'], true)
+            : [];
+    }
+
+    public function setProviderData(array $value): bool
     {
         $providerData = json_encode($value);
         if ($this->data['provider_data'] === $providerData) {
@@ -252,20 +184,12 @@ class User extends Model
         return $this->setModified('provider_data');
     }
 
-    /**
-     * @return string
-     */
-    public function getRememberKey()
+    public function getRememberKey(): ?string
     {
         return $this->data['remember_key'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setRememberKey(?string $value)
+    public function setRememberKey(?string $value): bool
     {
         if ($this->data['remember_key'] === $value) {
             return false;

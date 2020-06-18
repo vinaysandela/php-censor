@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class BuildMeta extends Model
@@ -19,20 +18,12 @@ class BuildMeta extends Model
         'meta_value' => null,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -43,20 +34,12 @@ class BuildMeta extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return int
-     */
-    public function getBuildId()
+    public function getBuildId(): int
     {
         return (int)$this->data['build_id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setBuildId(int $value)
+    public function setBuildId(int $value): bool
     {
         if ($this->data['build_id'] === $value) {
             return false ;
@@ -67,20 +50,12 @@ class BuildMeta extends Model
         return $this->setModified('build_id');
     }
 
-    /**
-     * @return string
-     */
-    public function getMetaKey()
+    public function getMetaKey(): string
     {
         return $this->data['meta_key'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setMetaKey(string $value)
+    public function setMetaKey(string $value): bool
     {
         if ($this->data['meta_key'] === $value) {
             return false;
@@ -91,20 +66,12 @@ class BuildMeta extends Model
         return $this->setModified('meta_key');
     }
 
-    /**
-     * @return string
-     */
-    public function getMetaValue()
+    public function getMetaValue(): string
     {
         return $this->data['meta_value'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setMetaValue(string $value)
+    public function setMetaValue(string $value): bool
     {
         if ($this->data['meta_value'] === $value) {
             return false;

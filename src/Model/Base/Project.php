@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use DateTime;
-use Exception;
 use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
@@ -65,20 +63,12 @@ class Project extends Model
         self::TYPE_BITBUCKET_SERVER
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -89,20 +79,12 @@ class Project extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->data['title'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setTitle(string $value)
+    public function setTitle(string $value): bool
     {
         if ($this->data['title'] === $value) {
             return false;
@@ -113,20 +95,12 @@ class Project extends Model
         return $this->setModified('title');
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->data['reference'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setReference(string $value)
+    public function setReference(string $value): bool
     {
         if ($this->data['reference'] === $value) {
             return false;
@@ -137,20 +111,12 @@ class Project extends Model
         return $this->setModified('reference');
     }
 
-    /**
-     * @return string
-     */
-    public function getDefaultBranch()
+    public function getDefaultBranch(): string
     {
         return $this->data['default_branch'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setDefaultBranch(string $value)
+    public function setDefaultBranch(string $value): bool
     {
         if ($this->data['default_branch'] === $value) {
             return false;
@@ -161,20 +127,12 @@ class Project extends Model
         return $this->setModified('default_branch');
     }
 
-    /**
-     * @return bool
-     */
-    public function getDefaultBranchOnly()
+    public function getDefaultBranchOnly(): bool
     {
         return (bool)$this->data['default_branch_only'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setDefaultBranchOnly(bool $value)
+    public function setDefaultBranchOnly(bool $value): bool
     {
         if ($this->data['default_branch_only'] === (int)$value) {
             return false;
@@ -185,20 +143,12 @@ class Project extends Model
         return $this->setModified('default_branch_only');
     }
 
-    /**
-     * @return string
-     */
-    public function getSshPrivateKey()
+    public function getSshPrivateKey(): ?string
     {
         return $this->data['ssh_private_key'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setSshPrivateKey(?string $value)
+    public function setSshPrivateKey(?string $value): bool
     {
         if ($this->data['ssh_private_key'] === $value) {
             return false;
@@ -209,20 +159,12 @@ class Project extends Model
         return $this->setModified('ssh_private_key');
     }
 
-    /**
-     * @return string
-     */
-    public function getSshPublicKey()
+    public function getSshPublicKey(): ?string
     {
         return $this->data['ssh_public_key'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setSshPublicKey(?string $value)
+    public function setSshPublicKey(?string $value): bool
     {
         if ($this->data['ssh_public_key'] === $value) {
             return false;
@@ -233,22 +175,15 @@ class Project extends Model
         return $this->setModified('ssh_public_key');
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->data['type'];
     }
 
     /**
-     * @param string $value
-     *
-     * @return bool
-     *
      * @throws InvalidArgumentException
      */
-    public function setType(string $value)
+    public function setType(string $value): bool
     {
         if (!in_array($value, static::$allowedTypes, true)) {
             throw new InvalidArgumentException(
@@ -265,32 +200,26 @@ class Project extends Model
         return $this->setModified('type');
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return array|string|null
-     */
-    public function getAccessInformation($key = null)
+    public function getAccessInformationItem(string $key)
     {
-        $data              = json_decode($this->data['access_information'], true);
-        $accessInformation = null;
-        if (is_null($key)) {
-            $accessInformation = $data;
-        } elseif (isset($data[$key])) {
-            $accessInformation = $data[$key];
+        $accessInformation = $this->getAccessInformation();
+        if (!empty($accessInformation[$key])) {
+            return $accessInformation[$key];
         }
 
-        return $accessInformation;
+        return null;
     }
 
-    /**
-     * @param array $value
-     *
-     * @return bool
-     */
-    public function setAccessInformation(array $value)
+    public function getAccessInformation(): array
     {
-        $accessInformation = json_encode($value);
+        return !empty($this->data['access_information'])
+            ? \json_decode($this->data['access_information'], true)
+            : [];
+    }
+
+    public function setAccessInformation(array $value): bool
+    {
+        $accessInformation = \json_encode($value);
         if ($this->data['access_information'] === $accessInformation) {
             return false;
         }
@@ -300,20 +229,12 @@ class Project extends Model
         return $this->setModified('access_information');
     }
 
-    /**
-     * @return string
-     */
-    public function getBuildConfig()
+    public function getBuildConfig(): ?string
     {
         return $this->data['build_config'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setBuildConfig(?string $value)
+    public function setBuildConfig(?string $value): bool
     {
         if ($this->data['build_config'] === $value) {
             return false;
@@ -324,20 +245,12 @@ class Project extends Model
         return $this->setModified('build_config');
     }
 
-    /**
-     * @return bool
-     */
-    public function getOverwriteBuildConfig()
+    public function getOverwriteBuildConfig(): bool
     {
         return (bool)$this->data['overwrite_build_config'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setOverwriteBuildConfig(bool $value)
+    public function setOverwriteBuildConfig(bool $value): bool
     {
         if ($this->data['overwrite_build_config'] === (int)$value) {
             return false;
@@ -348,20 +261,12 @@ class Project extends Model
         return $this->setModified('overwrite_build_config');
     }
 
-    /**
-     * @return bool
-     */
-    public function getAllowPublicStatus()
+    public function getAllowPublicStatus(): bool
     {
         return (bool)$this->data['allow_public_status'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setAllowPublicStatus(bool $value)
+    public function setAllowPublicStatus(bool $value): bool
     {
         if ($this->data['allow_public_status'] === (int)$value) {
             return false;
@@ -372,20 +277,12 @@ class Project extends Model
         return $this->setModified('allow_public_status');
     }
 
-    /**
-     * @return bool
-     */
-    public function getArchived()
+    public function getArchived(): bool
     {
         return (bool)$this->data['archived'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setArchived(bool $value)
+    public function setArchived(bool $value): bool
     {
         if ($this->data['archived'] === (int)$value) {
             return false;
@@ -396,20 +293,12 @@ class Project extends Model
         return $this->setModified('archived');
     }
 
-    /**
-     * @return int
-     */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return $this->data['group_id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setGroupId(int $value)
+    public function setGroupId(int $value): bool
     {
         if ($this->data['group_id'] === $value) {
             return false;
@@ -421,25 +310,14 @@ class Project extends Model
     }
 
     /**
-     * @return DateTime|null
-     *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getCreateDate()
+    public function getCreateDate(): \DateTime
     {
-        if ($this->data['create_date']) {
-            return new DateTime($this->data['create_date']);
-        }
-
-        return null;
+        return new \DateTime($this->data['create_date']);
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setCreateDate(DateTime $value)
+    public function setCreateDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -452,20 +330,12 @@ class Project extends Model
         return $this->setModified('create_date');
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserId()
+    public function getUserId(): ?int
     {
         return $this->data['user_id'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setUserId(?int $value)
+    public function setUserId(?int $value): bool
     {
         if ($this->data['user_id'] === $value) {
             return false;

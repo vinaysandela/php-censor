@@ -71,13 +71,18 @@ class ProjectTest extends TestCase
         self::assertEquals(false, $result);
     }
 
+    public function testBranchFailed()
+    {
+        $this->expectException(\TypeError::class);
+
+        $project = new Project();
+        $project->getDefaultBranch();
+    }
+
     public function testBranch()
     {
         $project = new Project();
-
-        self::assertEquals(null, $project->getDefaultBranch());
-
-        $result = $project->setDefaultBranch('branch');
+        $result  = $project->setDefaultBranch('branch');
         self::assertEquals(true, $result);
         self::assertEquals('branch', $project->getDefaultBranch());
 
@@ -143,8 +148,8 @@ class ProjectTest extends TestCase
         $result = $project->setAccessInformation(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(true, $result);
         self::assertEquals(['key-1' => 'value-1', 'key-2' => 'value-2'], $project->getAccessInformation());
-        self::assertEquals('value-1', $project->getAccessInformation('key-1'));
-        self::assertEquals(null, $project->getAccessInformation('key-3'));
+        self::assertEquals('value-1', $project->getAccessInformationItem('key-1'));
+        self::assertEquals(null, $project->getAccessInformationItem('key-3'));
 
         $result = $project->setAccessInformation(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(false, $result);
@@ -210,11 +215,16 @@ class ProjectTest extends TestCase
         self::assertEquals(false, $result);
     }
 
+    public function testCreateDateFailed()
+    {
+        $this->expectException(\TypeError::class);
+
+        $project = new Project();
+        $project->getCreateDate();
+    }
+
     public function testCreateDate()
     {
-        $project = new Project();
-        self::assertEquals(null, $project->getCreateDate());
-
         $project    = new Project();
         $createDate = new DateTime();
 

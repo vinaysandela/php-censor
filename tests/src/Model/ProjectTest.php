@@ -39,9 +39,9 @@ class ProjectTest extends TestCase
         $project = new Project();
         $project->setAccessInformation($info);
 
-        self::assertEquals('Item One', $project->getAccessInformation('item1'));
-        self::assertEquals(2, $project->getAccessInformation('item2'));
-        self::assertNull($project->getAccessInformation('item3'));
+        self::assertEquals('Item One', $project->getAccessInformationItem('item1'));
+        self::assertEquals(2, $project->getAccessInformationItem('item2'));
+        self::assertNull($project->getAccessInformationItem('item3'));
         self::assertEquals($info, $project->getAccessInformation());
     }
 }

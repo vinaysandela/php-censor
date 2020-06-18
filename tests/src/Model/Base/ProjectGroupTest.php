@@ -3,6 +3,7 @@
 namespace Tests\PHPCensor\Model\Base;
 
 use DateTime;
+use PHPCensor\Model\Base\Project;
 use PHPCensor\Model\Base\ProjectGroup;
 use PHPUnit\Framework\TestCase;
 
@@ -47,11 +48,16 @@ class ProjectGroupTest extends TestCase
         self::assertEquals(false, $result);
     }
 
+    public function testCreateDateFailed()
+    {
+        $this->expectException(\TypeError::class);
+
+        $projectGroup = new ProjectGroup();
+        $projectGroup->getCreateDate();
+    }
+
     public function testCreateDate()
     {
-        $projectGroup = new ProjectGroup();
-        self::assertEquals(null, $projectGroup->getCreateDate());
-
         $projectGroup = new ProjectGroup();
         $createDate   = new DateTime();
 

@@ -16,7 +16,7 @@ class GitlabBuild extends GitBuild
      */
     public function getCommitLink()
     {
-        $domain = $this->getProject()->getAccessInformation('domain');
+        $domain = $this->getProject()->getAccessInformationItem('domain');
         return '//' . $domain . '/' . $this->getProject()->getReference() . '/commit/' . $this->getCommitId();
     }
 
@@ -27,7 +27,7 @@ class GitlabBuild extends GitBuild
      */
     public function getBranchLink()
     {
-        $domain = $this->getProject()->getAccessInformation('domain');
+        $domain = $this->getProject()->getAccessInformationItem('domain');
         return '//' . $domain . '/' . $this->getProject()->getReference() . '/tree/' . $this->getBranch();
     }
 
@@ -40,7 +40,7 @@ class GitlabBuild extends GitBuild
     {
         return sprintf(
             '//%s/%s/blob/%s/{FILE}#L{LINE}',
-            $this->getProject()->getAccessInformation('domain'),
+            $this->getProject()->getAccessInformationItem('domain'),
             $this->getProject()->getReference(),
             $this->getCommitId()
         );
@@ -53,9 +53,9 @@ class GitlabBuild extends GitBuild
     {
         $key = trim($this->getProject()->getSshPrivateKey());
 
-        $user   = $this->getProject()->getAccessInformation('user');
-        $domain = $this->getProject()->getAccessInformation('domain');
-        $port   = $this->getProject()->getAccessInformation('port');
+        $user   = $this->getProject()->getAccessInformationItem('user');
+        $domain = $this->getProject()->getAccessInformationItem('domain');
+        $port   = $this->getProject()->getAccessInformationItem('port');
 
         if (!empty($key)) {
             $url =  'ssh://' . $user . '@' . $domain;

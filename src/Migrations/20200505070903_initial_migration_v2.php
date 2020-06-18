@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 use PHPCensor\Model\Build;
@@ -18,7 +20,7 @@ class InitialMigrationV2 extends AbstractMigration
 
     private function isNewInstallationUp(): bool
     {
-        $isNewInstallation = !$this->hasTable('build');
+        $isNewInstallation = !$this->hasTable('builds') && !$this->hasTable('build');
         if (!$isNewInstallation && !$this->getLatestV1Migration()) {
             throw new \RuntimeException(
                 'You should upgrade your PHP Censor to latest 1.2 release before you can upgrade it to release 2.0'
@@ -142,7 +144,7 @@ class InitialMigrationV2 extends AbstractMigration
             ->save();
 
         $projectGroups
-            ->addColumn('title', 'string', ['limit' => 100, 'null' => false])
+            ->addColumn('title', 'string', ['limit' => 100])
             ->addColumn('create_date', 'datetime')
             ->addColumn('user_id', 'integer', ['null' => true])
 

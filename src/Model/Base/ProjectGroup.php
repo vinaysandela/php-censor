@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use DateTime;
-use Exception;
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class ProjectGroup extends Model
@@ -21,20 +18,12 @@ class ProjectGroup extends Model
         'user_id'     => null,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -45,20 +34,12 @@ class ProjectGroup extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->data['title'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setTitle(string $value)
+    public function setTitle(string $value): bool
     {
         if ($this->data['title'] === $value) {
             return false;
@@ -70,25 +51,14 @@ class ProjectGroup extends Model
     }
 
     /**
-     * @return DateTime|null
-     *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getCreateDate()
+    public function getCreateDate(): \DateTime
     {
-        if ($this->data['create_date']) {
-            return new DateTime($this->data['create_date']);
-        }
-
-        return null;
+        return new \DateTime($this->data['create_date']);
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setCreateDate(DateTime $value)
+    public function setCreateDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -101,20 +71,12 @@ class ProjectGroup extends Model
         return $this->setModified('create_date');
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUserId()
+    public function getUserId(): ?int
     {
         return $this->data['user_id'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setUserId(?int $value)
+    public function setUserId(?int $value): bool
     {
         if ($this->data['user_id'] === $value) {
             return false;

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class Environment extends Model
@@ -19,20 +18,12 @@ class Environment extends Model
         'branches'   => null,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -43,20 +34,12 @@ class Environment extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return int
-     */
-    public function getProjectId()
+    public function getProjectId(): int
     {
         return (int)$this->data['project_id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setProjectId(int $value)
+    public function setProjectId(int $value): bool
     {
         if ($this->data['project_id'] === $value) {
             return false;
@@ -70,17 +53,12 @@ class Environment extends Model
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->data['name'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setName(string $value)
+    public function setName(string $value): bool
     {
         if ($this->data['name'] === $value) {
             return false;
@@ -91,10 +69,7 @@ class Environment extends Model
         return $this->setModified('name');
     }
 
-    /**
-     * @return array
-     */
-    public function getBranches()
+    public function getBranches(): array
     {
         return array_filter(
             array_map(
@@ -104,12 +79,7 @@ class Environment extends Model
         );
     }
 
-    /**
-     * @param array $value
-     *
-     * @return bool
-     */
-    public function setBranches(array $value)
+    public function setBranches(array $value): bool
     {
         $branches = implode("\n", $value);
         if ($this->data['branches'] === $branches) {

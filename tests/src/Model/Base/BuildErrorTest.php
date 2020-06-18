@@ -126,11 +126,16 @@ class BuildErrorTest extends TestCase
         self::assertEquals(false, $result);
     }
 
+    public function testCreateDateFailed()
+    {
+        $this->expectException(\TypeError::class);
+
+        $buildError = new BuildError();
+        $buildError->getCreateDate();
+    }
+
     public function testCreateDate()
     {
-        $buildError = new BuildError();
-        self::assertEquals(null, $buildError->getCreateDate());
-
         $buildError = new BuildError();
         $createDate = new DateTime();
 

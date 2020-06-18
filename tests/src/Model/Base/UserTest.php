@@ -131,8 +131,8 @@ class UserTest extends TestCase
         $result = $user->setProviderData(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(true, $result);
         self::assertEquals(['key-1' => 'value-1', 'key-2' => 'value-2'], $user->getProviderData());
-        self::assertEquals('value-1', $user->getProviderData('key-1'));
-        self::assertEquals(null, $user->getProviderData('key-3'));
+        self::assertEquals('value-1', $user->getProviderDataItem('key-1'));
+        self::assertEquals(null, $user->getProviderDataItem('key-3'));
 
         $result = $user->setProviderData(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(false, $result);

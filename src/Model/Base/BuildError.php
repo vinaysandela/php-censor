@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace PHPCensor\Model\Base;
 
-use DateTime;
-use Exception;
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class BuildError extends Model
@@ -33,20 +30,12 @@ class BuildError extends Model
         'is_new'      => 0,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return (int)$this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
@@ -57,20 +46,12 @@ class BuildError extends Model
         return $this->setModified('id');
     }
 
-    /**
-     * @return int
-     */
-    public function getBuildId()
+    public function getBuildId(): int
     {
         return (int)$this->data['build_id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setBuildId(int $value)
+    public function setBuildId(int $value): bool
     {
         if ($this->data['build_id'] === $value) {
             return false;
@@ -81,20 +62,12 @@ class BuildError extends Model
         return $this->setModified('build_id');
     }
 
-    /**
-     * @return string
-     */
-    public function getPlugin()
+    public function getPlugin(): string
     {
         return $this->data['plugin'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setPlugin(string $value)
+    public function setPlugin(string $value): bool
     {
         if ($this->data['plugin'] === $value) {
             return false;
@@ -105,10 +78,7 @@ class BuildError extends Model
         return $this->setModified('plugin');
     }
 
-    /**
-     * @return string
-     */
-    public function getFile()
+    public function getFile(): ?string
     {
         return $this->data['file'];
     }
@@ -118,7 +88,7 @@ class BuildError extends Model
      *
      * @return bool
      */
-    public function setFile(?string $value)
+    public function setFile(?string $value): bool
     {
         if ($this->data['file'] === $value) {
             return false;
@@ -129,20 +99,12 @@ class BuildError extends Model
         return $this->setModified('file');
     }
 
-    /**
-     * @return int
-     */
-    public function getLineStart()
+    public function getLineStart(): ?int
     {
         return (int)$this->data['line_start'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setLineStart(?int $value)
+    public function setLineStart(?int $value): bool
     {
         if ($this->data['line_start'] === $value) {
             return false;
@@ -153,20 +115,12 @@ class BuildError extends Model
         return $this->setModified('line_start');
     }
 
-    /**
-     * @return int
-     */
-    public function getLineEnd()
+    public function getLineEnd(): ?int
     {
         return (int)$this->data['line_end'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setLineEnd(?int $value)
+    public function setLineEnd(?int $value): bool
     {
         if ($this->data['line_end'] === $value) {
             return false;
@@ -177,20 +131,12 @@ class BuildError extends Model
         return $this->setModified('line_end');
     }
 
-    /**
-     * @return int
-     */
-    public function getSeverity()
+    public function getSeverity(): int
     {
         return (int)$this->data['severity'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setSeverity(int $value)
+    public function setSeverity(int $value): bool
     {
         if ($this->data['severity'] === $value) {
             return false;
@@ -201,20 +147,12 @@ class BuildError extends Model
         return $this->setModified('severity');
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->data['message'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setMessage(string $value)
+    public function setMessage(string $value): bool
     {
         if ($this->data['message'] === $value) {
             return false;
@@ -226,25 +164,14 @@ class BuildError extends Model
     }
 
     /**
-     * @return DateTime|null
-     *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getCreateDate()
+    public function getCreateDate(): \DateTime
     {
-        if ($this->data['create_date']) {
-            return new DateTime($this->data['create_date']);
-        }
-
-        return null;
+        return new \DateTime($this->data['create_date']);
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setCreateDate(DateTime $value)
+    public function setCreateDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -257,20 +184,12 @@ class BuildError extends Model
         return $this->setModified('create_date');
     }
 
-    /**
-     * @return string
-     */
-    public function getHash()
+    public function getHash(): string
     {
         return $this->data['hash'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setHash(string $value)
+    public function setHash(string $value): bool
     {
         if ($this->data['hash'] === $value) {
             return false;
@@ -281,20 +200,12 @@ class BuildError extends Model
         return $this->setModified('hash');
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsNew()
+    public function getIsNew(): bool
     {
         return (bool)$this->data['is_new'];
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
-    public function setIsNew(bool $value)
+    public function setIsNew(bool $value): bool
     {
         if ($this->data['is_new'] === (int)$value) {
             return false;
