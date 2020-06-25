@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use GuzzleHttp\Client;
@@ -66,7 +68,7 @@ class Deployer extends Plugin
                     'branch'      => $this->builder->interpolate('%BRANCH%'),
                     'commit'      => $this->builder->interpolate('%COMMIT_ID%'),
                     'update_only' => $this->updateOnly,
-                ]
+                ],
             ]
         );
 

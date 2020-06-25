@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use DirectoryIterator;
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Model\Build;
 use PHPCensor\Plugin;
@@ -49,11 +50,11 @@ class PhpTalLint extends Plugin
     {
         parent::__construct($builder, $build, $options);
 
-        if (!empty($options['allowed_errors']) && is_int($options['allowed_errors'])) {
+        if (!empty($options['allowed_errors']) && \is_int($options['allowed_errors'])) {
             $this->allowedErrors = $options['allowed_errors'];
         }
 
-        if (!empty($options['allowed_warnings']) && is_int($options['allowed_warnings'])) {
+        if (!empty($options['allowed_warnings']) && \is_int($options['allowed_warnings'])) {
             $this->allowedWarnings = $options['allowed_warnings'];
         }
 
@@ -99,15 +100,17 @@ class PhpTalLint extends Plugin
 
     /**
      * Lint an item (file or directory) by calling the appropriate method.
+     *
      * @param $item
      * @param $itemPath
+     *
      * @return bool
      */
     protected function lintItem($item, $itemPath)
     {
         $success = true;
 
-        if ($item->isFile() && in_array(strtolower($item->getExtension()), $this->suffixes)) {
+        if ($item->isFile() && \in_array(\strtolower($item->getExtension()), $this->suffixes)) {
             if (!$this->lintFile($itemPath)) {
                 $success = false;
             }
@@ -120,7 +123,9 @@ class PhpTalLint extends Plugin
 
     /**
      * Run phptal lint against a directory of files.
+     *
      * @param $path
+     *
      * @return bool
      */
     protected function lintDirectory($path)
@@ -135,7 +140,7 @@ class PhpTalLint extends Plugin
 
             $itemPath = $path . $item->getFilename();
 
-            if (in_array($itemPath, $this->ignore)) {
+            if (\in_array($itemPath, $this->ignore)) {
                 continue;
             }
 
@@ -149,7 +154,9 @@ class PhpTalLint extends Plugin
 
     /**
      * Run phptal lint against a specific file.
+     *
      * @param $path
+     *
      * @return bool
      */
     protected function lintFile($path)
@@ -166,8 +173,8 @@ class PhpTalLint extends Plugin
 
         $output = $this->builder->getLastOutput();
 
-        if (preg_match('/Found (.+?) (error|warning)/i', $output, $matches)) {
-            $rows = explode(PHP_EOL, $output);
+        if (\preg_match('/Found (.+?) (error|warning)/i', $output, $matches)) {
+            $rows = \explode(PHP_EOL, $output);
 
             unset($rows[0]);
             unset($rows[1]);
@@ -175,21 +182,21 @@ class PhpTalLint extends Plugin
             unset($rows[3]);
 
             foreach ($rows as $row) {
-                $name = basename($path);
+                $name = \basename($path);
 
-                $row = str_replace('(use -i to include your custom modifier functions)', '', $row);
-                $message = str_replace($name . ': ', '', $row);
+                $row = \str_replace('(use -i to include your custom modifier functions)', '', $row);
+                $message = \str_replace($name . ': ', '', $row);
 
-                $parts = explode(' (line ', $message);
+                $parts = \explode(' (line ', $message);
 
-                $message = trim($parts[0]);
-                $line = str_replace(')', '', $parts[1]);
+                $message = \trim($parts[0]);
+                $line = \str_replace(')', '', $parts[1]);
 
                 $this->failedPaths[] = [
                     'file'    => $path,
                     'line'    => $line,
                     'type'    => $matches[2],
-                    'message' => $message
+                    'message' => $message,
                 ];
             }
 

@@ -1,8 +1,10 @@
 <?php
 
-session_start();
+declare(strict_types=1);
 
-require_once(dirname(__DIR__) . '/bootstrap.php');
+\session_start();
+
+require_once(\dirname(__DIR__) . '/bootstrap.php');
 
 $fc = new PHPCensor\Application($config);
 print $fc->handleRequest();

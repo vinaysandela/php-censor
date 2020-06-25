@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use Exception;
@@ -129,7 +131,7 @@ class WebhookController extends Controller
         if ($project->getDefaultBranchOnly() && ($branch !== $project->getDefaultBranch())) {
             return [
                 'status'  => 'ignored',
-                'message' => 'The branch is not a branch by default. Build is allowed only for the branch by default.'
+                'message' => 'The branch is not a branch by default. Build is allowed only for the branch by default.',
             ];
         }
 
@@ -141,8 +143,8 @@ class WebhookController extends Controller
             if (!empty($environmentIds)) {
                 $duplicates = [];
                 foreach ($environmentIds as $environmentId) {
-                    if (!in_array($environmentId, $ignoreEnvironments) ||
-                        ($tag && !in_array($tag, $ignoreTags, true))) {
+                    if (!\in_array($environmentId, $ignoreEnvironments) ||
+                        ($tag && !\in_array($tag, $ignoreTags, true))) {
                         // If not, create a new build job for it:
                         $build = $this->buildService->createBuild(
                             $project,
@@ -168,56 +170,51 @@ class WebhookController extends Controller
                 if (!empty($createdBuilds)) {
                     if (empty($duplicates)) {
                         return ['status' => 'ok', 'builds' => $createdBuilds];
-                    } else {
-                        return [
+                    }
+                    return [
                             'status'  => 'ok',
                             'builds'  => $createdBuilds,
-                            'message' => sprintf(
+                            'message' => \sprintf(
                                 'For this commit some builds already exists (%s)',
-                                implode(', ', $duplicates)
-                            )
+                                \implode(', ', $duplicates)
+                            ),
                         ];
-                    }
-                } else {
-                    return [
-                        'status'  => 'ignored',
-                        'message' => sprintf(
-                            'For this commit already created builds (%s)',
-                            implode(', ', $duplicates)
-                        )
-                    ];
                 }
-            } else {
-                return ['status' => 'ignored', 'message' => 'Branch not assigned to any environment'];
-            }
-        } else {
-            $environmentId = null;
-            if (!in_array($environmentId, $ignoreEnvironments, true) ||
-                ($tag && !in_array($tag, $ignoreTags, true))) {
-                $build = $this->buildService->createBuild(
-                    $project,
-                    null,
-                    $commitId,
-                    $branch,
-                    $tag,
-                    $committer,
-                    $commitMessage,
-                    (int)$source,
-                    0,
-                    $extra
-                );
-
-                return ['status' => 'ok', 'buildID' => $build->getID()];
-            } else {
                 return [
+                        'status'  => 'ignored',
+                        'message' => \sprintf(
+                            'For this commit already created builds (%s)',
+                            \implode(', ', $duplicates)
+                        ),
+                    ];
+            }
+            return ['status' => 'ignored', 'message' => 'Branch not assigned to any environment'];
+        }
+        $environmentId = null;
+        if (!\in_array($environmentId, $ignoreEnvironments, true) ||
+                ($tag && !\in_array($tag, $ignoreTags, true))) {
+            $build = $this->buildService->createBuild(
+                $project,
+                null,
+                $commitId,
+                $branch,
+                $tag,
+                $committer,
+                $commitMessage,
+                (int)$source,
+                0,
+                $extra
+            );
+
+            return ['status' => 'ok', 'buildID' => $build->getID()];
+        }
+        return [
                     'status'  => 'ignored',
-                    'message' => sprintf(
+                    'message' => \sprintf(
                         'Duplicate of build #%d',
-                        array_search($environmentId, $ignoreEnvironments)
+                        \array_search($environmentId, $ignoreEnvironments)
                     ),
                 ];
-            }
-        }
     }
 
     /**
@@ -236,7 +233,7 @@ class WebhookController extends Controller
             throw new Exception('Project does not exist: ' . $projectId);
         }
 
-        if (is_numeric($projectId)) {
+        if (\is_numeric($projectId)) {
             $project = $this->projectStore->getById((int)$projectId);
         } else {
             $projects = $this->projectStore->getByTitle($projectId, 2);
@@ -246,10 +243,10 @@ class WebhookController extends Controller
             if ($projects['count'] > 1) {
                 throw new Exception('Project id is ambiguous: ' . $projectId);
             }
-            $project = reset($projects['items']);
+            $project = \reset($projects['items']);
         }
 
-        if (!in_array($project->getType(), $expectedType, true)) {
+        if (!\in_array($project->getType(), $expectedType, true)) {
             throw new Exception('Wrong project type: ' . $project->getType());
         }
 
@@ -332,7 +329,7 @@ class WebhookController extends Controller
     public function svn($projectId)
     {
         $project       = $this->fetchProject($projectId, [
-            Project::TYPE_SVN
+            Project::TYPE_SVN,
         ]);
         $branch        = $this->getParam('branch', $project->getDefaultBranch());
         $commit        = $this->getParam('commit');
@@ -371,10 +368,10 @@ class WebhookController extends Controller
 
         // Support both old services and new webhooks
         if ($payload = $this->getParam('payload')) {
-            return $this->bitbucketService(json_decode($payload, true), $project);
+            return $this->bitbucketService(\json_decode($payload, true), $project);
         }
 
-        $payload = json_decode(file_get_contents("php://input"), true);
+        $payload = \json_decode(\file_get_contents("php://input"), true);
 
         // Handle Pull Request webhooks:
         if (!empty($payload['pullrequest'])) {
@@ -394,7 +391,7 @@ class WebhookController extends Controller
         // Invalid event from bitbucket
         return [
             'status' => 'failed',
-            'commits' => []
+            'commits' => [],
         ];
     }
 
@@ -414,10 +411,10 @@ class WebhookController extends Controller
             if (!empty($commit['new'])) {
                 try {
                     $email = $commit['new']['target']['author']['raw'];
-                    if (strpos($email, '>') !== false) {
+                    if (\strpos($email, '>') !== false) {
                         // In order not to loose email if it is RAW, w/o "<>" symbols
-                        $email = substr($email, 0, strpos($email, '>'));
-                        $email = substr($email, strpos($email, '<') + 1);
+                        $email = \substr($email, 0, \strpos($email, '>'));
+                        $email = \substr($email, \strpos($email, '<') + 1);
                     }
 
                     $results[$commit['new']['target']['hash']] = $this->createBuild(
@@ -451,15 +448,15 @@ class WebhookController extends Controller
      */
     protected function bitbucketPullRequest(Project $project, array $payload)
     {
-        $triggerType = trim($_SERVER['HTTP_X_EVENT_KEY']);
+        $triggerType = \trim($_SERVER['HTTP_X_EVENT_KEY']);
 
-        if (!array_key_exists(
+        if (!\array_key_exists(
             $triggerType,
             BitbucketBuild::$pullrequestTriggersToSources
         )) {
             return [
                 'status'  => 'ignored',
-                'message' => 'Trigger type "' . $triggerType . '" is not supported.'
+                'message' => 'Trigger type "' . $triggerType . '" is not supported.',
             ];
         }
 
@@ -485,11 +482,11 @@ class WebhookController extends Controller
 
         $results = [];
         $status  = 'failed';
-        $commits = json_decode($commitsResponse->getBody(), true)['values'];
+        $commits = \json_decode($commitsResponse->getBody(), true)['values'];
         foreach ($commits as $commit) {
             // Skip all but the current HEAD commit ID:
             $id = $commit['hash'];
-            if (strpos($id, $payload['pullrequest']['source']['commit']['hash']) !== 0) {
+            if (\strpos($id, $payload['pullrequest']['source']['commit']['hash']) !== 0) {
                 $results[$id] = ['status' => 'ignored', 'message' => 'not branch head'];
 
                 continue;
@@ -498,10 +495,10 @@ class WebhookController extends Controller
             try {
                 $branch    = $payload['pullrequest']['destination']['branch']['name'];
                 $committer = $commit['author']['raw'];
-                if (strpos($committer, '>') !== false) {
+                if (\strpos($committer, '>') !== false) {
                     // In order not to loose email if it is RAW, w/o "<>" symbols
-                    $committer = substr($committer, 0, strpos($committer, '>'));
-                    $committer = substr($committer, strpos($committer, '<') + 1);
+                    $committer = \substr($committer, 0, \strpos($committer, '>'));
+                    $committer = \substr($committer, \strpos($committer, '<') + 1);
                 }
                 $message   = $commit['message'];
 
@@ -542,15 +539,15 @@ class WebhookController extends Controller
      */
     protected function bitbucketSvrPullRequest(Project $project, array $payload)
     {
-        $triggerType = trim($_SERVER['HTTP_X_EVENT_KEY']);
+        $triggerType = \trim($_SERVER['HTTP_X_EVENT_KEY']);
 
-        if (!array_key_exists(
+        if (!\array_key_exists(
             $triggerType,
             BitbucketServerBuild::$pullrequestTriggersToSources
         )) {
             return [
                 'status'  => 'ignored',
-                'message' => 'Trigger type "' . $triggerType . '" is not supported.'
+                'message' => 'Trigger type "' . $triggerType . '" is not supported.',
             ];
         }
 
@@ -601,8 +598,8 @@ class WebhookController extends Controller
         foreach ($payload['commits'] as $commit) {
             try {
                 $email = $commit['raw_author'];
-                $email = substr($email, 0, strpos($email, '>'));
-                $email = substr($email, strpos($email, '<') + 1);
+                $email = \substr($email, 0, \strpos($email, '>'));
+                $email = \substr($email, \strpos($email, '<') + 1);
 
                 $results[$commit['raw_node']] = $this->createBuild(
                     Build::SOURCE_WEBHOOK_PUSH,
@@ -638,26 +635,26 @@ class WebhookController extends Controller
 
         switch ($_SERVER['CONTENT_TYPE']) {
             case 'application/json':
-                $payload = json_decode(file_get_contents('php://input'), true);
+                $payload = \json_decode(\file_get_contents('php://input'), true);
                 break;
             case 'application/x-www-form-urlencoded':
-                $payload = json_decode($this->getParam('payload'), true);
+                $payload = \json_decode($this->getParam('payload'), true);
                 break;
             default:
                 return [
                     'status'       => 'failed',
                     'error'        => 'Content type not supported.',
-                    'responseCode' => 401
+                    'responseCode' => 401,
                 ];
         }
 
         // Handle Pull Request webhooks:
-        if (array_key_exists('pull_request', $payload)) {
+        if (\array_key_exists('pull_request', $payload)) {
             return $this->githubPullRequest($project, $payload);
         }
 
         // Handle Push (and Tag) webhooks:
-        if (array_key_exists('head_commit', $payload)) {
+        if (\array_key_exists('head_commit', $payload)) {
             return $this->githubCommitRequest($project, $payload);
         }
 
@@ -675,13 +672,13 @@ class WebhookController extends Controller
     protected function githubCommitRequest(Project $project, array $payload)
     {
         // Github sends a payload when you close a pull request with a non-existent commit. We don't want this.
-        if (array_key_exists('after', $payload) &&
+        if (\array_key_exists('after', $payload) &&
             $payload['after'] === '0000000000000000000000000000000000000000') {
             return ['status' => 'ignored'];
         }
 
         if (isset($payload['head_commit']) && $payload['head_commit']) {
-            $isTag   = (substr($payload['ref'], 0, 10) == 'refs/tags/') ? true : false;
+            $isTag   = (\substr($payload['ref'], 0, 10) == 'refs/tags/') ? true : false;
             $commit  = $payload['head_commit'];
             $results = [];
             $status  = 'failed';
@@ -692,11 +689,11 @@ class WebhookController extends Controller
                 try {
                     $tag = null;
                     if ($isTag) {
-                        $tag       = str_replace('refs/tags/', '', $payload['ref']);
-                        $branch    = str_replace('refs/heads/', '', $payload['base_ref']);
+                        $tag       = \str_replace('refs/tags/', '', $payload['ref']);
+                        $branch    = \str_replace('refs/heads/', '', $payload['base_ref']);
                         $committer = $payload['pusher']['email'];
                     } else {
-                        $branch    = str_replace('refs/heads/', '', $payload['ref']);
+                        $branch    = \str_replace('refs/heads/', '', $payload['ref']);
                         $committer = $commit['committer']['email'];
                     }
 
@@ -734,15 +731,15 @@ class WebhookController extends Controller
      */
     protected function githubPullRequest(Project $project, array $payload)
     {
-        $triggerType = trim($payload['action']);
+        $triggerType = \trim($payload['action']);
 
-        if (!array_key_exists(
+        if (!\array_key_exists(
             $triggerType,
             GithubBuild::$pullrequestTriggersToSources
         )) {
             return [
                 'status'  => 'ignored',
-                'message' => 'Trigger type "' . $triggerType . '" is not supported.'
+                'message' => 'Trigger type "' . $triggerType . '" is not supported.',
             ];
         }
 
@@ -776,7 +773,7 @@ class WebhookController extends Controller
 
         $results = [];
         $status  = 'failed';
-        $commits = json_decode($response->getBody(), true);
+        $commits = \json_decode($response->getBody(), true);
         foreach ($commits as $commit) {
             // Skip all but the current HEAD commit ID:
             $id = $commit['sha'];
@@ -787,7 +784,7 @@ class WebhookController extends Controller
             }
 
             try {
-                $branch    = str_replace('refs/heads/', '', $payload['pull_request']['base']['ref']);
+                $branch    = \str_replace('refs/heads/', '', $payload['pull_request']['base']['ref']);
                 $committer = $commit['commit']['author']['email'];
                 $message   = $commit['commit']['message'];
 
@@ -832,8 +829,8 @@ class WebhookController extends Controller
             Project::TYPE_GIT,
         ]);
 
-        $payloadString = file_get_contents("php://input");
-        $payload       = json_decode($payloadString, true);
+        $payloadString = \file_get_contents("php://input");
+        $payload       = \json_decode($payloadString, true);
 
         // build on merge request events
         if (isset($payload['object_kind']) && $payload['object_kind'] == 'merge_request') {
@@ -856,15 +853,15 @@ class WebhookController extends Controller
         }
 
         // build on push events
-        if (isset($payload['commits']) && is_array($payload['commits'])) {
+        if (isset($payload['commits']) && \is_array($payload['commits'])) {
             // If we have a list of commits, then add them all as builds to be tested:
 
             $results = [];
             $status  = 'failed';
 
-            $commit = end($payload['commits']);
+            $commit = \end($payload['commits']);
             try {
-                $branch                 = str_replace('refs/heads/', '', $payload['ref']);
+                $branch                 = \str_replace('refs/heads/', '', $payload['ref']);
                 $committer              = $commit['author']['email'];
                 $results[$commit['id']] = $this->createBuild(
                     Build::SOURCE_WEBHOOK_PUSH,
@@ -906,19 +903,19 @@ class WebhookController extends Controller
 
         switch ($contentType) {
             case 'application/x-www-form-urlencoded':
-                $payload = json_decode($this->getParam('payload'), true);
+                $payload = \json_decode($this->getParam('payload'), true);
                 break;
             case 'application/json':
             default:
-                $payload = json_decode(file_get_contents('php://input'), true);
+                $payload = \json_decode(\file_get_contents('php://input'), true);
         }
 
         // Handle Push web hooks:
-        if (array_key_exists('commits', $payload)) {
+        if (\array_key_exists('commits', $payload)) {
             return $this->gogsCommitRequest($project, $payload);
         }
 
-        if (array_key_exists('pull_request', $payload)) {
+        if (\array_key_exists('pull_request', $payload)) {
             return $this->gogsPullRequest($project, $payload);
         }
 
@@ -935,13 +932,13 @@ class WebhookController extends Controller
      */
     protected function gogsCommitRequest(Project $project, array $payload)
     {
-        if (isset($payload['commits']) && is_array($payload['commits'])) {
+        if (isset($payload['commits']) && \is_array($payload['commits'])) {
             // If we have a list of commits, then add them all as builds to be tested:
             $results = [];
             $status  = 'failed';
             foreach ($payload['commits'] as $commit) {
                 try {
-                    $branch = str_replace('refs/heads/', '', $payload['ref']);
+                    $branch = \str_replace('refs/heads/', '', $payload['ref']);
                     $committer = $commit['author']['email'];
                     $results[$commit['id']] = $this->createBuild(
                         Build::SOURCE_WEBHOOK_PUSH,
@@ -987,21 +984,21 @@ class WebhookController extends Controller
         $activeStates   = ['open'];
         $inactiveStates = ['closed'];
 
-        if (!in_array($action, $activeActions) && !in_array($action, $inactiveActions)) {
+        if (!\in_array($action, $activeActions) && !\in_array($action, $inactiveActions)) {
             return ['status' => 'ignored', 'message' => 'Action ' . $action . ' ignored'];
         }
-        if (!in_array($state, $activeStates) && !in_array($state, $inactiveStates)) {
+        if (!\in_array($state, $activeStates) && !\in_array($state, $inactiveStates)) {
             return ['status' => 'ignored', 'message' => 'State ' . $state . ' ignored'];
         }
 
         $envs = [];
 
         // Get environment form labels
-        if (in_array($action, $activeActions) && in_array($state, $activeStates)) {
-            if (isset($pullRequest['labels']) && is_array($pullRequest['labels'])) {
+        if (\in_array($action, $activeActions) && \in_array($state, $activeStates)) {
+            if (isset($pullRequest['labels']) && \is_array($pullRequest['labels'])) {
                 foreach ($pullRequest['labels'] as $label) {
-                    if (strpos($label['name'], 'env:') === 0) {
-                        $envs[] = substr($label['name'], 4);
+                    if (\strpos($label['name'], 'env:') === 0) {
+                        $envs[] = \substr($label['name'], 4);
                     }
                 }
             }
@@ -1012,8 +1009,8 @@ class WebhookController extends Controller
         $store       = Factory::getStore('Environment');
         foreach ($envObjects['items'] as $environment) {
             $branches = $environment->getBranches();
-            if (in_array($environment->getName(), $envs)) {
-                if (!in_array($headBranch, $branches)) {
+            if (\in_array($environment->getName(), $envs)) {
+                if (!\in_array($headBranch, $branches)) {
                     // Add branch to environment
                     $branches[] = $headBranch;
                     $environment->setBranches($branches);
@@ -1021,9 +1018,9 @@ class WebhookController extends Controller
                     $envsUpdated[] = $environment->getId();
                 }
             } else {
-                if (in_array($headBranch, $branches)) {
+                if (\in_array($headBranch, $branches)) {
                     // Remove branch from environment
-                    $branches = array_diff($branches, [$headBranch]);
+                    $branches = \array_diff($branches, [$headBranch]);
                     $environment->setBranches($branches);
                     $store->save($environment);
                     $envsUpdated[] = $environment->getId();

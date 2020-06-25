@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 use Exception;
@@ -34,6 +36,7 @@ abstract class PhpUnitResult
      * Parse the results
      *
      * @return $this
+     *
      * @throws Exception If fails to parse the output
      */
     abstract public function parse();
@@ -57,7 +60,7 @@ abstract class PhpUnitResult
     protected function parseTestcase($testcase)
     {
         $severity = $this->getSeverity($testcase);
-        $pass = isset(array_fill_keys([self::SEVERITY_PASS, self::SEVERITY_SKIPPED], true)[$severity]);
+        $pass = isset(\array_fill_keys([self::SEVERITY_PASS, self::SEVERITY_SKIPPED], true)[$severity]);
         $data = [
             'pass'     => $pass,
             'severity' => $severity,

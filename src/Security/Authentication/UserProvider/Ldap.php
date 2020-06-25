@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Security\Authentication\UserProvider;
 
 use PHPCensor\Model\User;
@@ -76,7 +78,7 @@ class Ldap extends AbstractProvider implements LoginPasswordProviderInterface
         $user        = Factory::getStore('User');
         $userService = new UserService($user);
 
-        $parts    = explode("@", $identifier);
+        $parts    = \explode("@", $identifier);
         $username = $parts[0];
 
         return $userService->createUser($username, $identifier, $this->key, $this->config, '', false);

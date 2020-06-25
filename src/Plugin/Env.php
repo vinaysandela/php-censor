@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Plugin;
@@ -26,15 +28,15 @@ class Env extends Plugin
     {
         $success = true;
         foreach ($this->options as $key => $value) {
-            if (is_numeric($key)) {
+            if (\is_numeric($key)) {
                 // This allows the developer to specify env vars like " - FOO=bar" or " - FOO: bar"
-                $envVar = is_array($value)? key($value).'='.current($value): $value;
+                $envVar = \is_array($value)? \key($value).'='.\current($value): $value;
             } else {
                 // This allows the standard syntax: "FOO: bar"
                 $envVar = "$key=$value";
             }
 
-            if (!putenv($this->builder->interpolate($envVar))) {
+            if (!\putenv($this->builder->interpolate($envVar))) {
                 $success = false;
                 $this->builder->logFailure('Unable to set environment variable');
             }

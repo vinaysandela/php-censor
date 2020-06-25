@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -67,13 +69,14 @@ class Sqlite extends Plugin
 
     /**
      * Connects to SQLite and runs a specified set of queries.
+     *
      * @return bool
      */
     public function execute()
     {
         try {
-            $pdoOptions = array_merge([
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            $pdoOptions = \array_merge([
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ], $this->pdoOptions);
 
             $pdo  = new PDO('sqlite:' . $this->path, $pdoOptions);

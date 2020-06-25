@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use GuzzleHttp\Client;
@@ -35,7 +37,7 @@ class Bitbucket
 
         $data = [
             'content'   => $comment,
-            'anchor'    => substr($commitId, 0, 12),
+            'anchor'    => \substr($commitId, 0, 12),
             'filename'  => $file,
         ];
         if ($line > 0) {
@@ -61,6 +63,7 @@ class Bitbucket
      * @param $file
      * @param $line
      * @param $comment
+     *
      * @return null
      */
     public function createCommitComment($repo, $commitId, $file, $line, $comment)

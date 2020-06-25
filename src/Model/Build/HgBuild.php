@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use Exception;
@@ -35,7 +37,7 @@ class HgBuild extends Build
      */
     public function createWorkingCopy(Builder $builder, $buildPath)
     {
-        $key = trim($this->getProject()->getSshPrivateKey());
+        $key = \trim($this->getProject()->getSshPrivateKey());
 
         if (!empty($key)) {
             $success = $this->cloneBySsh($builder, $buildPath);
@@ -86,7 +88,7 @@ class HgBuild extends Build
         }
 
         // Remove the key file:
-        unlink($keyFile);
+        \unlink($keyFile);
 
         return $success;
     }

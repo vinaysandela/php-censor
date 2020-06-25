@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Console;
 
 use Exception;
@@ -16,8 +18,8 @@ use PHPCensor\Command\CheckLocalizationCommand;
 use PHPCensor\Command\CreateAdminCommand;
 use PHPCensor\Command\CreateBuildCommand;
 use PHPCensor\Command\InstallCommand;
-use PHPCensor\Command\RemoveOldBuildsCommand;
 use PHPCensor\Command\RebuildQueueCommand;
+use PHPCensor\Command\RemoveOldBuildsCommand;
 use PHPCensor\Command\WorkerCommand;
 use PHPCensor\Config;
 use PHPCensor\Logging\AnsiFormatter;
@@ -50,6 +52,7 @@ LOGO;
      * @param Config $applicationConfig
      *
      * @return Logger
+     *
      * @throws Exception
      */
     protected function initLogger(Config $applicationConfig)
@@ -81,7 +84,7 @@ LOGO;
      */
     public function __construct($name = 'PHP Censor', $version = 'UNKNOWN')
     {
-        $realVersion = trim(file_get_contents(ROOT_DIR . 'VERSION.md'));
+        $realVersion = \trim(\file_get_contents(ROOT_DIR . 'VERSION.md'));
         if (!$realVersion) {
             $realVersion = $version;
         }
@@ -124,7 +127,7 @@ LOGO;
         if (!empty($databaseSettings['type'])
             && $databaseSettings['type'] === 'pgsql'
         ) {
-            if (!array_key_exists('pgsql-sslmode', $databaseSettings['servers']['write'][0])) {
+            if (!\array_key_exists('pgsql-sslmode', $databaseSettings['servers']['write'][0])) {
                 $databaseSettings['servers']['write'][0]['pgsql-sslmode'] = 'prefer';
             }
 
@@ -193,6 +196,6 @@ LOGO;
      */
     public function getLongVersion()
     {
-        return sprintf('<info>%s</info> v%s', $this->getName(), $this->getVersion());
+        return \sprintf('<info>%s</info> v%s', $this->getName(), $this->getVersion());
     }
 }

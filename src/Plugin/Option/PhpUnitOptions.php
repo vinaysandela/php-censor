@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Option;
 
-use PHPCensor\Builder;
 use PHPCensor\Config;
 
 /**
@@ -61,7 +62,7 @@ class PhpUnitOptions
         foreach ($this->getCommandArguments() as $argumentName => $argumentValues) {
             $prefix = $argumentName[0] == '-' ? '' : '--';
 
-            if (!is_array($argumentValues)) {
+            if (!\is_array($argumentValues)) {
                 $argumentValues = [$argumentValues];
             }
 
@@ -103,15 +104,15 @@ class PhpUnitOptions
              */
             if (isset($this->options['args'])) {
                 $rawArgs = $this->options['args'];
-                if (is_array($rawArgs)) {
+                if (\is_array($rawArgs)) {
                     $this->arguments = $rawArgs;
                 } else {
                     /*
                      * Try to parse old arguments in a single string
                      */
-                    preg_match_all('@--([a-z\-]+)([\s=]+)?[\'"]?((?!--)[-\w/.,\\\]+)?[\'"]?@', (string)$rawArgs, $argsMatch);
+                    \preg_match_all('@--([a-z\-]+)([\s=]+)?[\'"]?((?!--)[-\w/.,\\\]+)?[\'"]?@', (string)$rawArgs, $argsMatch);
 
-                    if (!empty($argsMatch) && sizeof($argsMatch) > 2) {
+                    if (!empty($argsMatch) && \sizeof($argsMatch) > 2) {
                         foreach ($argsMatch[1] as $index => $argName) {
                             $this->addArgument($argName, $argsMatch[3][$index]);
                         }
@@ -155,7 +156,7 @@ class PhpUnitOptions
     public function addArgument($argumentName, $argumentValue = null)
     {
         if (isset($this->arguments[$argumentName])) {
-            if (!is_array($this->arguments[$argumentName])) {
+            if (!\is_array($this->arguments[$argumentName])) {
                 // Convert existing argument values into an array
                 $this->arguments[$argumentName] = [$this->arguments[$argumentName]];
             }
@@ -177,15 +178,15 @@ class PhpUnitOptions
     {
         $directories = $this->getOption('directories');
 
-        if (is_string($directories)) {
+        if (\is_string($directories)) {
             $directories = [$directories];
         } else {
-            if (is_null($directories)) {
+            if (\is_null($directories)) {
                 $directories = [];
             }
         }
 
-        return is_array($directories) ? $directories : [$directories];
+        return \is_array($directories) ? $directories : [$directories];
     }
 
     /**
@@ -256,7 +257,7 @@ class PhpUnitOptions
         $this->parseArguments();
 
         if (isset($this->arguments[$argumentName])) {
-            return is_array(
+            return \is_array(
                 $this->arguments[$argumentName]
             ) ? $this->arguments[$argumentName] : [$this->arguments[$argumentName]];
         }
@@ -283,7 +284,7 @@ class PhpUnitOptions
         ];
 
         foreach ($files as $file) {
-            if (file_exists($buildPath . $file)) {
+            if (\file_exists($buildPath . $file)) {
                 return $file;
             }
         }

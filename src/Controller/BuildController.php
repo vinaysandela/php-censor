@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use JasonGrimes\Paginator;
@@ -88,7 +90,7 @@ class BuildController extends WebController
         $data    = $this->getBuildData($build, $plugin, $severity, $isNew, (($page - 1) * $perPage), $perPage);
         $pages   = ($data['errors'] === 0)
             ? 1
-            : (int)ceil($data['errors'] / $perPage);
+            : (int)\ceil($data['errors'] / $perPage);
 
         if ($page > $pages) {
             $page = $pages;
@@ -101,11 +103,11 @@ class BuildController extends WebController
         $this->view->build     = $build;
         $this->view->data      = $data;
 
-        $this->view->plugin     = urldecode($plugin);
+        $this->view->plugin     = \urldecode($plugin);
         $this->view->plugins    = $errorStore->getKnownPlugins($buildId, $severity, $isNew);
-        $this->view->severity   = urldecode(null !== $severity ? $severity : '');
+        $this->view->severity   = \urldecode(null !== $severity ? $severity : '');
         $this->view->severities = $errorStore->getKnownSeverities($buildId, $plugin, $isNew);
-        $this->view->isNew      = urldecode($isNew);
+        $this->view->isNew      = \urldecode($isNew);
         $this->view->isNews     = ['only_new', 'only_old'];
 
         $this->view->page      = $page;
@@ -168,16 +170,17 @@ class BuildController extends WebController
 
     /**
      * Returns an array of the JS plugins to include.
+     *
      * @return array
      */
     protected function getUiPlugins()
     {
         $rtn  = [];
         $path = PUBLIC_DIR . 'assets/js/build-plugins/';
-        $dir  = opendir($path);
+        $dir  = \opendir($path);
 
-        while ($item = readdir($dir)) {
-            if (substr($item, 0, 1) == '.' || substr($item, -3) != '.js') {
+        while ($item = \readdir($dir)) {
+            if (\substr($item, 0, 1) == '.' || \substr($item, -3) != '.js') {
                 continue;
             }
 
@@ -205,15 +208,15 @@ class BuildController extends WebController
         $data['status']      = (int)$build->getStatus();
         $data['log']         = $this->cleanLog($build->getLog());
 
-        $data['create_date'] = !is_null($build->getCreateDate())
+        $data['create_date'] = !\is_null($build->getCreateDate())
             ? $build->getCreateDate()->format('Y-m-d H:i:s')
             : null;
 
-        $data['start_date'] = !is_null($build->getStartDate())
+        $data['start_date'] = !\is_null($build->getStartDate())
             ? $build->getStartDate()->format('Y-m-d H:i:s')
             : null;
 
-        $data['finish_date'] = !is_null($build->getFinishDate())
+        $data['finish_date'] = !\is_null($build->getFinishDate())
             ? $build->getFinishDate()->format('Y-m-d H:i:s')
             : null;
 
@@ -263,10 +266,10 @@ class BuildController extends WebController
             $params['is_new'] = $isNew;
         }
 
-        $urlPattern = $urlPattern . '?' . str_replace(
+        $urlPattern = $urlPattern . '?' . \str_replace(
             '%28%3Anum%29',
             '(:num)',
-            http_build_query(array_merge($params, ['page' => '(:num)']))
+            \http_build_query(\array_merge($params, ['page' => '(:num)']))
         ) . '#errors';
         $paginator = new Paginator($total, $perPage, $page, $urlPattern);
 
@@ -281,6 +284,7 @@ class BuildController extends WebController
      * @param $buildId
      *
      * @return RedirectResponse
+     *
      * @throws NotFoundException
      */
     public function rebuild($buildId)
@@ -360,7 +364,7 @@ class BuildController extends WebController
             $rtn['items'][$build->getId()]['header_row'] = $header->render();
         }
 
-        ksort($rtn['items']);
+        \ksort($rtn['items']);
         return $rtn;
     }
 

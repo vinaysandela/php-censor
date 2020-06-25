@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Plugin;
 
 use PHPCensor\Plugin\PhpUnit;
@@ -16,7 +18,7 @@ class PhpUnitTest extends TestCase
     public function testSingleConfigFile()
     {
         $options = [
-            'config' => ROOT_DIR . 'phpunit.xml.dist'
+            'config' => ROOT_DIR . 'phpunit.xml.dist',
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['runConfig'])->getMock();
@@ -31,7 +33,7 @@ class PhpUnitTest extends TestCase
             'config' => [
                 ROOT_DIR . 'phpunit1.xml',
                 ROOT_DIR . 'phpunit2.xml',
-            ]
+            ],
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['runConfig'])->getMock();
@@ -70,7 +72,7 @@ class PhpUnitTest extends TestCase
     public function testSingleDir()
     {
         $options = [
-            'directories' => '/test/directory/one'
+            'directories' => '/test/directory/one',
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['runConfig'])->getMock();
@@ -85,7 +87,7 @@ class PhpUnitTest extends TestCase
             'directories' => [
                 '/test/directory/one',
                 '/test/directory/two',
-            ]
+            ],
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['runConfig'])->getMock();
@@ -100,7 +102,7 @@ class PhpUnitTest extends TestCase
     public function testProcessResultsFromConfig()
     {
         $options = [
-            'config' => ROOT_DIR . 'phpunit.xml.dist'
+            'config' => ROOT_DIR . 'phpunit.xml.dist',
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['processResults'])->getMock();
@@ -112,7 +114,7 @@ class PhpUnitTest extends TestCase
     public function testProcessResultsFromDir()
     {
         $options = [
-            'directories' => ROOT_DIR . 'Tests'
+            'directories' => ROOT_DIR . 'Tests',
         ];
 
         $mockPlugin = $this->getPluginBuilder($options)->setMethods(['processResults'])->getMock();

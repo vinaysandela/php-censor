@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use PHPCensor\Model\Build;
@@ -61,13 +63,12 @@ class BitbucketHgBuild extends HgBuild
      */
     protected function getCloneUrl()
     {
-        $key = trim($this->getProject()->getSshPrivateKey());
+        $key = \trim($this->getProject()->getSshPrivateKey());
 
         if (!empty($key)) {
             return 'ssh://hg@bitbucket.org/' . $this->getProject()->getReference();
-        } else {
-            return 'https://bitbucket.org/' . $this->getProject()->getReference();
         }
+        return 'https://bitbucket.org/' . $this->getProject()->getReference();
     }
 
     /**
@@ -79,7 +80,7 @@ class BitbucketHgBuild extends HgBuild
     {
         $reference = $this->getProject()->getReference();
 
-        if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
+        if (\in_array($this->getSource(), Build::$pullRequestSources, true)) {
             $reference = $this->getExtra('remote_reference');
         }
 

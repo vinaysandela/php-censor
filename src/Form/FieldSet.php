@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Form;
 
 use PHPCensor\View;
@@ -22,7 +24,7 @@ class FieldSet extends Element
                 $fieldName = $field->getName();
 
                 if (empty($fieldName)) {
-                    $rtn = array_merge($rtn, $field->getValues());
+                    $rtn = \array_merge($rtn, $field->getValues());
                 } else {
                     $rtn[$fieldName] = $field->getValues();
                 }

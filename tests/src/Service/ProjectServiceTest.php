@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Service;
 
 use PHPCensor\Model\Project;
@@ -223,7 +225,7 @@ class ProjectServiceTest extends TestCase
                     'reference' => 'php-censor',
                     'origin'    => 'http://github:443/php-censor.git',
                 ],
-            ]
+            ],
         ];
     }
 

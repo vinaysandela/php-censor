@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Config;
 use PHPCensor\Model\Build;
@@ -91,7 +92,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
      */
     public static function canExecuteOnStage($stage, Build $build)
     {
-        if (Build::STAGE_TEST === $stage && !is_null(PhpUnitOptions::findConfigFile($build->getBuildPath()))) {
+        if (Build::STAGE_TEST === $stage && !\is_null(PhpUnitOptions::findConfigFile($build->getBuildPath()))) {
             return true;
         }
 
@@ -113,8 +114,8 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
         }
 
         $cmd      = $this->executable;
-        $lastLine = exec($cmd . ' --log-json . --version');
-        if (false !== strpos($lastLine, '--log-json')) {
+        $lastLine = \exec($cmd . ' --log-json . --version');
+        if (false !== \strpos($lastLine, '--log-json')) {
             $logFormat = 'junit'; // --log-json is not supported
         } else {
             $logFormat = 'json';
@@ -136,7 +137,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
             }
         }
 
-        return !in_array(false, $success);
+        return !\in_array(false, $success);
     }
 
     /**
@@ -163,7 +164,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
         $buildPath = $this->build->getBuildPath();
 
         // Save the results into a log file
-        $logFile = tempnam(sys_get_temp_dir(), 'jlog_');
+        $logFile = \tempnam(\sys_get_temp_dir(), 'jlog_');
         $options->addArgument('log-' . $logFormat, $logFile);
 
         // Removes any current configurations files
@@ -175,11 +176,11 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
 
         if ($options->getOption('coverage') && $allowPublicArtifacts) {
             if (!$fileSystem->exists($this->buildLocation)) {
-                $fileSystem->mkdir($this->buildLocation, (0777 & ~umask()));
+                $fileSystem->mkdir($this->buildLocation, (0777 & ~\umask()));
             }
 
-            if (!is_writable($this->buildLocation)) {
-                throw new Exception(sprintf(
+            if (!\is_writable($this->buildLocation)) {
+                throw new Exception(\sprintf(
                     'The location %s is not writable or does not exist.',
                     $this->buildLocation
                 ));
@@ -208,7 +209,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
 
             if ($covHtmlOk) {
                 $this->builder->logSuccess(
-                    sprintf(
+                    \sprintf(
                         "\nPHPUnit successful build coverage report.\nYou can use coverage report for this build: %s\nOr coverage report for last build in the branch: %s",
                         APP_URL . 'artifacts/phpunit/' . $this->buildDirectory . '/index.html',
                         APP_URL . 'artifacts/phpunit/' . $this->buildBranchDirectory . '/index.html'
@@ -216,7 +217,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
                 );
             } elseif ($allowPublicArtifacts) {
                 $this->builder->logFailure(
-                    sprintf(
+                    \sprintf(
                         "\nPHPUnit could not build coverage report.\nmissing: %s\nlast of this branch: %s",
                         APP_URL . 'artifacts/phpunit/' . $this->buildDirectory . '/index.html',
                         APP_URL . 'artifacts/phpunit/' . $this->buildBranchDirectory . '/index.html'
@@ -239,7 +240,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
      */
     protected function extractCoverage($output)
     {
-        preg_match(
+        \preg_match(
             '#Classes:[\s]*(.*?)%[^M]*?Methods:[\s]*(.*?)%[^L]*?Lines:[\s]*(.*?)\%#s',
             $output,
             $matches
@@ -262,8 +263,8 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
     protected function checkRequiredCoverage($coverage)
     {
         foreach ($coverage as $key => $currentValue) {
-            if ($requiredValue = $this->options->getOption(implode('_', ['required', $key, 'coverage']))) {
-                if (bccomp($requiredValue, $currentValue) === 1) {
+            if ($requiredValue = $this->options->getOption(\implode('_', ['required', $key, 'coverage']))) {
+                if (\bccomp($requiredValue, $currentValue) === 1) {
                     return false;
                 }
             }
@@ -282,7 +283,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
      */
     protected function processResults($logFile, $logFormat)
     {
-        if (file_exists($logFile)) {
+        if (\file_exists($logFile)) {
             if ('json' === $logFormat) {
                 $parser = new PhpUnitResultJson($logFile, $this->build->getBuildPath());
             } else {
@@ -306,7 +307,7 @@ class PhpUnit extends Plugin implements ZeroConfigPluginInterface
                     $error['line']
                 );
             }
-            unlink($logFile);
+            \unlink($logFile);
         } else {
             throw new Exception('log output file does not exist: ' . $logFile);
         }

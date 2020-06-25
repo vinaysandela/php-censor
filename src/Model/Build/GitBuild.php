@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use Exception;
@@ -36,7 +38,7 @@ class GitBuild extends Build
      */
     public function createWorkingCopy(Builder $builder, $buildPath)
     {
-        $key = trim($this->getProject()->getSshPrivateKey());
+        $key = \trim($this->getProject()->getSshPrivateKey());
 
         if (!empty($key)) {
             $success = $this->cloneBySsh($builder, $buildPath);
@@ -93,7 +95,7 @@ class GitBuild extends Build
 
         $buildSettings = $builder->getConfig('build_settings');
         if ($buildSettings && isset($buildSettings['clone_depth']) && (0 < (int)$buildSettings['clone_depth'])) {
-            $cmd .= ' --depth ' . intval($buildSettings['clone_depth']) . ' ';
+            $cmd .= ' --depth ' . (int)($buildSettings['clone_depth']) . ' ';
         }
 
         $cmd .= ' -b "%s" "%s" "%s"';
@@ -124,7 +126,7 @@ class GitBuild extends Build
 
         $buildSettings = $builder->getConfig('build_settings');
         if ($buildSettings && isset($buildSettings['clone_depth']) && (0 < (int)$buildSettings['clone_depth'])) {
-            $cmd .= ' --depth ' . intval($buildSettings['clone_depth']) . ' ';
+            $cmd .= ' --depth ' . (int)($buildSettings['clone_depth']) . ' ';
         }
 
         $cmd .= ' -b "%s" "%s" "%s"';
@@ -134,15 +136,15 @@ class GitBuild extends Build
 
         if ($success) {
             $extra = [
-                'git_ssh_wrapper' => $gitSshWrapper
+                'git_ssh_wrapper' => $gitSshWrapper,
             ];
 
             $success = $this->postCloneSetup($builder, $cloneTo, $extra);
         }
 
         // Remove the key file and git wrapper:
-        unlink($keyFile);
-        unlink($gitSshWrapper);
+        \unlink($keyFile);
+        \unlink($gitSshWrapper);
 
         return $success;
     }
@@ -169,16 +171,16 @@ class GitBuild extends Build
 
         // Always update the commit hash with the actual HEAD hash
         if ($builder->executeCommand($chdir . ' && git rev-parse HEAD', $cloneTo)) {
-            $commitId = trim($builder->getLastOutput());
+            $commitId = \trim($builder->getLastOutput());
 
             $this->setCommitId($commitId);
 
             if ($builder->executeCommand($chdir . ' && git log -1 --pretty=format:%%s %s', $cloneTo, $commitId)) {
-                $this->setCommitMessage(trim($builder->getLastOutput()));
+                $this->setCommitMessage(\trim($builder->getLastOutput()));
             }
 
             if ($builder->executeCommand($chdir . ' && git log -1 --pretty=format:%%ae %s', $cloneTo, $commitId)) {
-                $this->setCommitterEmail(trim($builder->getLastOutput()));
+                $this->setCommitterEmail(\trim($builder->getLastOutput()));
             }
         }
 

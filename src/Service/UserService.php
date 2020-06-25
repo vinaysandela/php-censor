@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Service;
 
 use PHPCensor\Model\User;
@@ -40,7 +42,7 @@ class UserService
         $user = new User();
         $user->setName($name);
         $user->setEmail($email);
-        $user->setHash(password_hash($password, PASSWORD_DEFAULT));
+        $user->setHash(\password_hash($password, PASSWORD_DEFAULT));
         $user->setProviderKey($providerKey);
         $user->setProviderData($providerData);
         $user->setIsAdmin($isAdmin);
@@ -67,10 +69,10 @@ class UserService
         $user->setEmail($emailAddress);
 
         if (!empty($password)) {
-            $user->setHash(password_hash($password, PASSWORD_DEFAULT));
+            $user->setHash(\password_hash($password, PASSWORD_DEFAULT));
         }
 
-        if (!is_null($isAdmin)) {
+        if (!\is_null($isAdmin)) {
             $user->setIsAdmin($isAdmin);
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 class BitbucketNotifyPluginResult
@@ -76,9 +78,9 @@ class BitbucketNotifyPluginResult
 
     public function generateFormattedOutput($maxPluginNameLength)
     {
-        return trim(sprintf(
+        return \trim(\sprintf(
             $this->outputFormat,
-            str_pad($this->plugin, $maxPluginNameLength),
+            \str_pad($this->plugin, $maxPluginNameLength),
             $this->left,
             $this->right,
             $this->generateComment()
@@ -91,7 +93,7 @@ class BitbucketNotifyPluginResult
             return '';
         }
 
-        return sprintf(
+        return \sprintf(
             $this->getTaskDescriptionMessage(),
             $this->plugin,
             $this->left,

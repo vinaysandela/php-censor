@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Builder;
@@ -67,14 +69,14 @@ class DeployerOrg extends Plugin
         if (empty($this->options)) {
             return [
                 'message'    => 'Can\'t find configuration for plugin!',
-                'successful' => false
+                'successful' => false,
             ];
         }
 
         if (empty($this->options[$this->branch])) {
             return [
                 'message'    => 'There is no specified config for this branch.',
-                'successful' => true
+                'successful' => true,
             ];
         }
 
@@ -82,7 +84,7 @@ class DeployerOrg extends Plugin
         if (empty($branchConf['stage'])) {
             return [
                 'message'    => 'There is no stage for this branch',
-                'successful' => false
+                'successful' => false,
             ];
         }
 
@@ -102,15 +104,14 @@ class DeployerOrg extends Plugin
             'verbose'      =>'v',
             'very verbose' => 'vv',
             'debug'        => 'vvv',
-            'quiet'        => 'q'
+            'quiet'        => 'q',
         ];
 
-        $verbosity = strtolower(trim($verbosity));
+        $verbosity = \strtolower(\trim($verbosity));
         if ($verbosity !== 'normal') {
             return '-' . $logLevelList[$verbosity];
-        } else {
-            return '';
         }
+        return '';
     }
 
     /**
@@ -141,6 +142,6 @@ class DeployerOrg extends Plugin
             $options[] = '--file=' . $config['file'];
         }
 
-        return implode(' ', $options);
+        return \implode(' ', $options);
     }
 }

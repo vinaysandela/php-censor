@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 use Exception;
@@ -18,6 +20,7 @@ class PhpUnitResultJunit extends PhpUnitResult
      * Parse the results
      *
      * @return $this
+     *
      * @throws Exception If fails to parse the output
      */
     public function parse()
@@ -79,10 +82,10 @@ class PhpUnitResultJunit extends PhpUnitResult
         $msg = $this->getMessageTrace($testCase);
         if ('' !== $msg) {
             //strip trace
-            $trPos = strrpos($msg, "\n\n");
+            $trPos = \strrpos($msg, "\n\n");
             if (false !== $trPos) {
                 $tracePos = $trPos;
-                $msg = substr($msg, 0, $trPos);
+                $msg = \substr($msg, 0, $trPos);
             }
         }
         if ('' === $msg) {
@@ -100,15 +103,15 @@ class PhpUnitResultJunit extends PhpUnitResult
 
     protected function buildTrace($testCase)
     {
-        if (!is_int($testCase['_tracePos'])) {
+        if (!\is_int($testCase['_tracePos'])) {
             $this->buildMessage($testCase);
         }
 
         if ($testCase['_tracePos'] >= 0) {
-            $stackStr = substr($this->getMessageTrace($testCase), (int)$testCase['_tracePos'] + 2, -1);
-            $trace = explode("\n", str_replace($this->buildPath, '.', $stackStr));
+            $stackStr = \substr($this->getMessageTrace($testCase), (int)$testCase['_tracePos'] + 2, -1);
+            $trace = \explode("\n", \str_replace($this->buildPath, '.', $stackStr));
         } else {
-            $trace = array();
+            $trace = [];
         }
 
         return $trace;
@@ -140,7 +143,7 @@ class PhpUnitResultJunit extends PhpUnitResult
      */
     private function loadResultFile()
     {
-        if (!file_exists($this->outputFile) || 0 === filesize($this->outputFile)) {
+        if (!\file_exists($this->outputFile) || 0 === \filesize($this->outputFile)) {
             $this->internalProblem('empty output file');
 
             return new SimpleXMLElement('<empty/>'); // new empty element

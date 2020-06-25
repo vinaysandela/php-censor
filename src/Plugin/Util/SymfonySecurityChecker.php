@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 use PHPCensor\Plugin;
@@ -32,7 +34,7 @@ class SymfonySecurityChecker
      */
     public function check($lock)
     {
-        if (!is_file($lock)) {
+        if (!\is_file($lock)) {
             throw new \RuntimeException('Lock file does not exist.');
         }
 

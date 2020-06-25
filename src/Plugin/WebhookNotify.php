@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -39,20 +41,21 @@ class WebhookNotify extends Plugin
     {
         parent::__construct($builder, $build, $options);
 
-        if (!is_array($options)) {
+        if (!\is_array($options)) {
             throw new Exception('Please configure the options for the webhook_notify plugin!');
         }
 
         if (!isset($options['url'])) {
             throw new Exception('Please define the url for webhook_notify plugin!');
         }
-        $this->url = trim($options['url']);
+        $this->url = \trim($options['url']);
     }
 
     /**
      * Run the plugin.
      *
      * @return bool
+     *
      * @throws HttpException
      */
     public function execute()
@@ -62,7 +65,7 @@ class WebhookNotify extends Plugin
             'project_title'   => $this->build->getProjectTitle(),
             'build_id'        => $this->build->getId(),
             'commit_id'       => $this->build->getCommitId(),
-            'short_commit_id' => substr($this->build->getCommitId(), 0, 7),
+            'short_commit_id' => \substr($this->build->getCommitId(), 0, 7),
             'branch'          => $this->build->getBranch(),
             'branch_link'     => $this->build->getBranchLink(),
             'committer_email' => $this->build->getCommitterEmail(),
@@ -76,7 +79,7 @@ class WebhookNotify extends Plugin
 
 
         try {
-            $version   = trim(file_get_contents(ROOT_DIR . 'VERSION.md'));
+            $version   = \trim(\file_get_contents(ROOT_DIR . 'VERSION.md'));
             $userAgent = 'PHP Censor/' . $version;
             $client    = new Client([
                 'headers' => [
@@ -111,6 +114,6 @@ class WebhookNotify extends Plugin
                 return 'Failed';
                 break;
         }
-        return sprintf('Unknown (%d)', $statusId);
+        return \sprintf('Unknown (%d)', $statusId);
     }
 }

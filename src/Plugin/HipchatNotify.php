@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -30,7 +32,7 @@ class HipchatNotify extends Plugin
     {
         return 'hipchat_notify';
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -38,11 +40,11 @@ class HipchatNotify extends Plugin
     {
         parent::__construct($builder, $build, $options);
 
-        $version         = trim(file_get_contents(ROOT_DIR . 'VERSION.md'));
+        $version         = \trim(\file_get_contents(ROOT_DIR . 'VERSION.md'));
         $this->userAgent = 'PHP Censor/' . $version;
         $this->cookie    = "php-censor-cookie";
 
-        if (is_array($options) && isset($options['authToken']) && isset($options['room'])) {
+        if (\is_array($options) && isset($options['authToken']) && isset($options['room'])) {
             $this->authToken = $options['authToken'];
             $this->room = $options['room'];
 
@@ -70,6 +72,7 @@ class HipchatNotify extends Plugin
 
     /**
      * Run the HipChat plugin.
+     *
      * @return bool
      */
     public function execute()
@@ -78,7 +81,7 @@ class HipchatNotify extends Plugin
         $message = $this->builder->interpolate($this->message);
 
         $result = true;
-        if (is_array($this->room)) {
+        if (\is_array($this->room)) {
             foreach ($this->room as $room) {
                 if (!$hipChat->message_room($room, 'PHP Censor', $message, $this->notify, $this->color)) {
                     $result = false;

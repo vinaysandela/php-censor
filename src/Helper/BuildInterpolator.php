@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use Exception;
@@ -35,7 +37,7 @@ class BuildInterpolator
         $this->interpolationVars = [];
 
         $this->interpolationVars['%COMMIT_ID%']       = $build->getCommitId();
-        $this->interpolationVars['%SHORT_COMMIT_ID%'] = substr($build->getCommitId(), 0, 7);
+        $this->interpolationVars['%SHORT_COMMIT_ID%'] = \substr($build->getCommitId(), 0, 7);
         $this->interpolationVars['%PROJECT_ID%']      = $build->getProjectId();
         $this->interpolationVars['%BUILD_ID%']        = $build->getId();
         $this->interpolationVars['%COMMITTER_EMAIL%'] = $build->getCommitterEmail();
@@ -61,21 +63,21 @@ class BuildInterpolator
 
         $this->interpolationVars['%ENVIRONMENT%'] = $environment;
 
-        putenv('PHP_CENSOR=1');
-        putenv('PHP_CENSOR_COMMIT_ID=' . $this->interpolationVars['%COMMIT_ID%']);
-        putenv('PHP_CENSOR_SHORT_COMMIT_ID=' . $this->interpolationVars['%SHORT_COMMIT_ID%']);
-        putenv('PHP_CENSOR_COMMITTER_EMAIL=' . $this->interpolationVars['%COMMITTER_EMAIL%']);
-        putenv('PHP_CENSOR_COMMIT_MESSAGE=' . $this->interpolationVars['%COMMIT_MESSAGE%']);
-        putenv('PHP_CENSOR_COMMIT_LINK=' . $this->interpolationVars['%COMMIT_LINK%']);
-        putenv('PHP_CENSOR_PROJECT_ID=' . $this->interpolationVars['%PROJECT_ID%']);
-        putenv('PHP_CENSOR_PROJECT_TITLE=' . $this->interpolationVars['%PROJECT_TITLE%']);
-        putenv('PHP_CENSOR_PROJECT_LINK=' . $this->interpolationVars['%PROJECT_LINK%']);
-        putenv('PHP_CENSOR_BUILD_ID=' . $this->interpolationVars['%BUILD_ID%']);
-        putenv('PHP_CENSOR_BUILD_PATH=' . $this->interpolationVars['%BUILD_PATH%']);
-        putenv('PHP_CENSOR_BUILD_LINK=' . $this->interpolationVars['%BUILD_LINK%']);
-        putenv('PHP_CENSOR_BRANCH=' . $this->interpolationVars['%BRANCH%']);
-        putenv('PHP_CENSOR_BRANCH_LINK=' . $this->interpolationVars['%BRANCH_LINK%']);
-        putenv('PHP_CENSOR_ENVIRONMENT=' . $this->interpolationVars['%ENVIRONMENT%']);
+        \putenv('PHP_CENSOR=1');
+        \putenv('PHP_CENSOR_COMMIT_ID=' . $this->interpolationVars['%COMMIT_ID%']);
+        \putenv('PHP_CENSOR_SHORT_COMMIT_ID=' . $this->interpolationVars['%SHORT_COMMIT_ID%']);
+        \putenv('PHP_CENSOR_COMMITTER_EMAIL=' . $this->interpolationVars['%COMMITTER_EMAIL%']);
+        \putenv('PHP_CENSOR_COMMIT_MESSAGE=' . $this->interpolationVars['%COMMIT_MESSAGE%']);
+        \putenv('PHP_CENSOR_COMMIT_LINK=' . $this->interpolationVars['%COMMIT_LINK%']);
+        \putenv('PHP_CENSOR_PROJECT_ID=' . $this->interpolationVars['%PROJECT_ID%']);
+        \putenv('PHP_CENSOR_PROJECT_TITLE=' . $this->interpolationVars['%PROJECT_TITLE%']);
+        \putenv('PHP_CENSOR_PROJECT_LINK=' . $this->interpolationVars['%PROJECT_LINK%']);
+        \putenv('PHP_CENSOR_BUILD_ID=' . $this->interpolationVars['%BUILD_ID%']);
+        \putenv('PHP_CENSOR_BUILD_PATH=' . $this->interpolationVars['%BUILD_PATH%']);
+        \putenv('PHP_CENSOR_BUILD_LINK=' . $this->interpolationVars['%BUILD_LINK%']);
+        \putenv('PHP_CENSOR_BRANCH=' . $this->interpolationVars['%BRANCH%']);
+        \putenv('PHP_CENSOR_BRANCH_LINK=' . $this->interpolationVars['%BRANCH_LINK%']);
+        \putenv('PHP_CENSOR_ENVIRONMENT=' . $this->interpolationVars['%ENVIRONMENT%']);
     }
 
     /**
@@ -85,9 +87,9 @@ class BuildInterpolator
      */
     private function realtimeInterpolate($input)
     {
-        $input = str_replace('%CURRENT_DATE%', \date('Y-m-d'), $input);
-        $input = str_replace('%CURRENT_TIME%', \date('H-i-s'), $input);
-        $input = str_replace('%CURRENT_DATETIME%', \date('Y-m-d_H-i-s'), $input);
+        $input = \str_replace('%CURRENT_DATE%', \date('Y-m-d'), $input);
+        $input = \str_replace('%CURRENT_TIME%', \date('H-i-s'), $input);
+        $input = \str_replace('%CURRENT_DATETIME%', \date('Y-m-d_H-i-s'), $input);
 
         return $input;
     }
@@ -104,9 +106,9 @@ class BuildInterpolator
     {
         $input = $this->realtimeInterpolate($input);
 
-        $keys   = array_keys($this->interpolationVars);
-        $values = array_values($this->interpolationVars);
+        $keys   = \array_keys($this->interpolationVars);
+        $values = \array_values($this->interpolationVars);
 
-        return str_replace($keys, $values, $input);
+        return \str_replace($keys, $values, $input);
     }
 }

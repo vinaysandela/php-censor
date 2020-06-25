@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 use PHPUnit\Framework\TestCase;
@@ -20,7 +22,7 @@ class BitbucketNotifyPluginResultTest extends TestCase
                     'string' => 'test',
                     'formattedOutput' => "test       | 0\t=> 0",
                     'taskDescription' => '',
-                ]
+                ],
             ],
             'unchangedWithFail' => [
                 [
@@ -33,7 +35,7 @@ class BitbucketNotifyPluginResultTest extends TestCase
                     'string' => 'test',
                     'formattedOutput' => "test       | 1\t=> 1\tpls improve me :-(",
                     'taskDescription' => '',
-                ]
+                ],
             ],
             'improved' => [
                 [
@@ -46,7 +48,7 @@ class BitbucketNotifyPluginResultTest extends TestCase
                     'string' => 'test',
                     'formattedOutput' => "test       | 1\t=> 0\tgreat success!",
                     'taskDescription' => '',
-                ]
+                ],
             ],
             'degraded' => [
                 [
@@ -59,13 +61,14 @@ class BitbucketNotifyPluginResultTest extends TestCase
                     'string' => 'test',
                     'formattedOutput' => "test       | 0\t=> 1\t!!!!! o_O",
                     'taskDescription' => 'pls fix test because it has increased from 0 to 1 errors',
-                ]
+                ],
             ],
         ];
     }
 
     /**
      * @dataProvider dataProvider
+     *
      * @param array $input
      * @param array $expected
      */

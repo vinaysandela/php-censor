@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -69,7 +71,7 @@ class CheckLocalizationCommand extends Command
             : false;
 
         $languagesList = (null !== $input->getOption('langs'))
-            ? explode(',', $input->getOption('langs'))
+            ? \explode(',', $input->getOption('langs'))
             : [];
 
         // Get English version
@@ -78,13 +80,13 @@ class CheckLocalizationCommand extends Command
         $diffs           = $this->compareTranslations($english, $othersLanguages);
 
         foreach ($diffs as $language => $value) {
-            $output->writeln(sprintf("%s:", $language));
+            $output->writeln(\sprintf("%s:", $language));
             if (!empty($value['not_present'])) {
-                $output->writeln("\tNot present:\n\t\t" . implode("\n\t\t", $value['not_present']));
+                $output->writeln("\tNot present:\n\t\t" . \implode("\n\t\t", $value['not_present']));
             }
 
             if ($sameThanEnglish === '1' && !empty($value['same'])) {
-                $output->writeln("\tSame than English:\n\t\t" . implode("\n\t\t", $value['same']));
+                $output->writeln("\tSame than English:\n\t\t" . \implode("\n\t\t", $value['same']));
             }
         }
     }
@@ -99,7 +101,7 @@ class CheckLocalizationCommand extends Command
     private function getTranslations($language)
     {
         return [
-            include($language)
+            include($language),
         ];
     }
 
@@ -112,20 +114,20 @@ class CheckLocalizationCommand extends Command
      */
     private function getLanguages(array $languagesList = [])
     {
-        $files = glob($this->basePath . '/*.php');
+        $files = \glob($this->basePath . '/*.php');
 
-        $languages = array_map(function ($dir) use ($languagesList) {
-            $name = basename($dir);
+        $languages = \array_map(function ($dir) use ($languagesList) {
+            $name = \basename($dir);
 
-            if (in_array($name, $this->excluded, true)) {
+            if (\in_array($name, $this->excluded, true)) {
                 return null;
             }
 
             // Check if in list of languages.
             if (!empty($languagesList)) {
-                $languageOfName = explode('.', $name);
+                $languageOfName = \explode('.', $name);
 
-                if (null == $languageOfName[1] || !in_array($languageOfName[1], $languagesList)) {
+                if (null == $languageOfName[1] || !\in_array($languageOfName[1], $languagesList)) {
                     return null;
                 }
             }
@@ -133,7 +135,7 @@ class CheckLocalizationCommand extends Command
             return $name;
         }, $files);
 
-        return array_filter($languages);
+        return \array_filter($languages);
     }
 
     /**
@@ -153,7 +155,7 @@ class CheckLocalizationCommand extends Command
             $current = $this->getTranslations($this->basePath.'/'.$language);
 
             foreach ($default as $key => $values) {
-                $keyValues = array_keys($values);
+                $keyValues = \array_keys($values);
 
                 foreach ($keyValues as $key2) {
                     if (!isset($current[$key][$key2])) {

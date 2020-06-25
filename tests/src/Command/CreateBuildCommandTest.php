@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Command;
 
 use PHPCensor\Command\CreateAdminCommand;

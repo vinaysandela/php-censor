@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Plugin;
 
 use PHPCensor\Config;
@@ -123,7 +125,7 @@ class EmailTest extends TestCase
     {
         $this->mailDelivered = $mailDelivered;
 
-        if (is_null($buildStatus)) {
+        if (\is_null($buildStatus)) {
             $this->buildStatus = Build::STATUS_SUCCESS;
         } else {
             $this->buildStatus = $buildStatus;

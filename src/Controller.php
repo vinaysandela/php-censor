@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
-use Symfony\Component\HttpFoundation\Request;
 use PHPCensor\Http\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class Controller
 {
@@ -39,11 +41,11 @@ abstract class Controller
      */
     public function hasAction($name)
     {
-        if (method_exists($this, $name)) {
+        if (\method_exists($this, $name)) {
             return true;
         }
 
-        if (method_exists($this, '__call')) {
+        if (\method_exists($this, '__call')) {
             return true;
         }
 
@@ -60,7 +62,7 @@ abstract class Controller
      */
     public function handleAction($action, $actionParams)
     {
-        return call_user_func_array([$this, $action], $actionParams);
+        return \call_user_func_array([$this, $action], $actionParams);
     }
 
     /**

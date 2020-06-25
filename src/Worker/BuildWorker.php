@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Worker;
 
 use DateTime;
@@ -112,13 +114,13 @@ class BuildWorker
             }
 
             if ($this->canForceRewindLoop()) {
-                sleep(1);
+                \sleep(1);
 
                 continue;
             }
 
             $job     = $this->pheanstalk->reserve();
-            $jobData = json_decode($job->getData(), true);
+            $jobData = \json_decode($job->getData(), true);
 
             if (!$this->verifyJob($job)) {
                 $this->deleteJob($job);
@@ -127,7 +129,7 @@ class BuildWorker
             }
 
             $this->logger->notice(
-                sprintf(
+                \sprintf(
                     'Received build #%s from the queue tube "%s".',
                     $jobData['build_id'],
                     $this->queueTube
@@ -138,7 +140,7 @@ class BuildWorker
 
             if (!$build) {
                 $this->logger->warning(
-                    sprintf(
+                    \sprintf(
                         'Build #%s from the queue tube "%s" does not exist in the database!',
                         $jobData['build_id'],
                         $this->queueTube
@@ -152,7 +154,7 @@ class BuildWorker
 
             if (Build::STATUS_PENDING !== $build->getStatus()) {
                 $this->logger->warning(
-                    sprintf(
+                    \sprintf(
                         'Invalid build #%s status "%s" from the queue tube "%s". ' .
                         'Build status should be "%s" (pending)!',
                         $build->getId(),
@@ -178,7 +180,7 @@ class BuildWorker
             } catch (Exception $e) {
                 $builder->getBuildLogger()->log('');
                 $builder->getBuildLogger()->logFailure(
-                    sprintf(
+                    \sprintf(
                         'BUILD FAILED! Exception: %s',
                         $e->getMessage()
                     ),
@@ -234,7 +236,7 @@ class BuildWorker
      */
     protected function canRunPeriodicalWork()
     {
-        $currentTime = time();
+        $currentTime = \time();
         if (($this->lastPeriodical + 60) > $currentTime) {
             return false;
         }
@@ -251,11 +253,11 @@ class BuildWorker
      */
     protected function verifyJob(Job $job)
     {
-        $jobData = json_decode($job->getData(), true);
+        $jobData = \json_decode($job->getData(), true);
 
-        if (empty($jobData) || !is_array($jobData)) {
+        if (empty($jobData) || !\is_array($jobData)) {
             $this->logger->warning(
-                sprintf('Empty job (#%s) from the queue tube "%s"!', $job->getId(), $this->queueTube)
+                \sprintf('Empty job (#%s) from the queue tube "%s"!', $job->getId(), $this->queueTube)
             );
 
             return false;
@@ -271,7 +273,7 @@ class BuildWorker
             return false;
         } elseif (self::JOB_TYPE_BUILD !== $jobType) {
             $this->logger->warning(
-                sprintf(
+                \sprintf(
                     'Invalid job (#%s) type "%s" in the queue tube "%s"!',
                     $job->getId(),
                     $jobType,

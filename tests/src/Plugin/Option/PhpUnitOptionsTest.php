@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Plugin\Option;
 
 use PHPCensor\Builder;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use Exception;
@@ -59,7 +61,7 @@ class CreateAdminCommand extends Command
 
         // Function to validate email address.
         $mailValidator = function ($answer) {
-            if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+            if (!\filter_var($answer, FILTER_VALIDATE_EMAIL)) {
                 throw new InvalidArgumentException('Must be a valid email address.');
             }
 

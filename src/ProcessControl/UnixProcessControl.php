@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\ProcessControl;
 
 /**
@@ -19,7 +21,7 @@ class UnixProcessControl implements ProcessControlInterface
     public function isRunning($pid)
     {
         $output = $exitCode = null;
-        exec(sprintf("ps %d", $pid), $output, $exitCode);
+        \exec(\sprintf("ps %d", $pid), $output, $exitCode);
         return $exitCode === 0;
     }
 
@@ -30,9 +32,9 @@ class UnixProcessControl implements ProcessControlInterface
     {
         $output = [];
         $result = 1;
-        
-        exec(sprintf("kill -%d %d", $forcefully ? 9 : 15, $pid), $output, $result);
-        
+
+        \exec(\sprintf("kill -%d %d", $forcefully ? 9 : 15, $pid), $output, $result);
+
         return !$result;
     }
 
@@ -45,6 +47,6 @@ class UnixProcessControl implements ProcessControlInterface
      */
     public static function isAvailable()
     {
-        return DIRECTORY_SEPARATOR === '/' && exec("which ps") && exec("which kill");
+        return DIRECTORY_SEPARATOR === '/' && \exec("which ps") && \exec("which kill");
     }
 }

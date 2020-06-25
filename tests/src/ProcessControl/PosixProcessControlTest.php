@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\ProcessControl;
 
 use PHPCensor\ProcessControl\PosixProcessControl;
@@ -13,6 +15,6 @@ class PosixProcessControlTest extends UnixProcessControlTest
 
     public function testIsAvailable()
     {
-        self::assertEquals(function_exists('posix_kill'), PosixProcessControl::isAvailable());
+        self::assertEquals(\function_exists('posix_kill'), PosixProcessControl::isAvailable());
     }
 }

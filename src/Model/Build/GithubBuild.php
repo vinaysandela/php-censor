@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use Exception;
@@ -91,7 +93,7 @@ class GithubBuild extends GitBuild
      */
     public function sendStatusPostback()
     {
-        if (!in_array($this->getSource(), Build::$webhookSources, true)) {
+        if (!\in_array($this->getSource(), Build::$webhookSources, true)) {
             return false;
         }
 
@@ -144,14 +146,14 @@ class GithubBuild extends GitBuild
         $response = $client->post($url, [
             'headers' => [
                 'Authorization' => 'token ' . $token,
-                'Content-Type'  => 'application/x-www-form-urlencoded'
+                'Content-Type'  => 'application/x-www-form-urlencoded',
             ],
             'json' => [
                 'state'       => $status,
                 'target_url'  => $phpCensorUrl . '/build/view/' . $this->getId(),
                 'description' => $description,
                 'context'     => 'PHP Censor',
-            ]
+            ],
         ]);
 
         $status = (int)$response->getStatusCode();
@@ -166,7 +168,7 @@ class GithubBuild extends GitBuild
      */
     protected function getCloneUrl()
     {
-        $key = trim($this->getProject()->getSshPrivateKey());
+        $key = \trim($this->getProject()->getSshPrivateKey());
 
         $port = $this->getProject()->getAccessInformation('port');
 
@@ -193,11 +195,11 @@ class GithubBuild extends GitBuild
         $message = parent::getCommitMessage();
         $project = $this->getProject();
 
-        if (!is_null($project)) {
+        if (!\is_null($project)) {
             $reference  = $project->getReference();
             $commitLink = '<a href="//' . $this->getDomain() . '/' . $reference . '/issues/$1">#$1</a>';
-            $message    = preg_replace('/\#([0-9]+)/', $commitLink, $message);
-            $message    = preg_replace(
+            $message    = \preg_replace('/\#([0-9]+)/', $commitLink, $message);
+            $message    = \preg_replace(
                 '/\@([a-zA-Z0-9_]+)/',
                 '<a href="//' . $this->getDomain() . '/$1">@$1</a>',
                 $message
@@ -215,7 +217,7 @@ class GithubBuild extends GitBuild
     public function getFileLinkTemplate()
     {
         $reference = $this->getProject()->getReference();
-        if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
+        if (\in_array($this->getSource(), Build::$pullRequestSources, true)) {
             $reference = $this->getExtra('remote_reference');
         }
 
@@ -235,7 +237,7 @@ class GithubBuild extends GitBuild
         $success = true;
 
         try {
-            if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
+            if (\in_array($this->getSource(), Build::$pullRequestSources, true)) {
                 $pullRequestId = $this->getExtra('pull_request_number');
 
                 $cmd = 'cd "%s" && git checkout -b php-censor/'
@@ -285,7 +287,7 @@ class GithubBuild extends GitBuild
             if ($file) {
                 $diffLineNumber = $this->getDiffLineNumber($builder, $file, $lineStart);
 
-                if (!is_null($diffLineNumber)) {
+                if (!\is_null($diffLineNumber)) {
                     $helper = new Github();
 
                     $repo     = $this->getProject()->getReference();

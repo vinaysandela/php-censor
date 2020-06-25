@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Store;
 
 use PDO;
@@ -53,7 +55,7 @@ class UserStore extends Store
      */
     public function getById($id, $useConnection = 'read')
     {
-        if (is_null($id)) {
+        if (\is_null($id)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -81,7 +83,7 @@ class UserStore extends Store
      */
     public function getByEmail($email)
     {
-        if (is_null($email)) {
+        if (\is_null($email)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -110,7 +112,7 @@ class UserStore extends Store
      */
     public function getByEmailOrName($emailOrName)
     {
-        if (is_null($emailOrName)) {
+        if (\is_null($emailOrName)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -138,7 +140,7 @@ class UserStore extends Store
      */
     public function getByRememberKey($rememberKey)
     {
-        if (is_null($rememberKey)) {
+        if (\is_null($rememberKey)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -168,7 +170,7 @@ class UserStore extends Store
      */
     public function getByName($name, $limit = 1000, $useConnection = 'read')
     {
-        if (is_null($name)) {
+        if (\is_null($name)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -183,13 +185,12 @@ class UserStore extends Store
             $map = function ($item) {
                 return new User($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 }

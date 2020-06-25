@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use PHPCensor\Config;
@@ -62,6 +64,7 @@ class UserController extends WebController
 
     /**
      * Allows the user to edit their profile.
+     *
      * @return string
      */
     public function profile()
@@ -129,7 +132,7 @@ class UserController extends WebController
         $language->setLabel(Lang::get('language'));
         $language->setRequired(true);
         $language->setOptions(
-            array_merge(
+            \array_merge(
                 [null => Lang::get('default') . ' (' . Config::getInstance()->get('php-censor.language') .  ')'],
                 Lang::getLanguageOptions()
             )
@@ -231,7 +234,7 @@ class UserController extends WebController
         $this->layout->title = $user->getName();
         $this->layout->subtitle = Lang::get('edit_user');
 
-        $values = array_merge($user->getDataArray(), $this->getParams());
+        $values = \array_merge($user->getDataArray(), $this->getParams());
         $form = $this->userForm($values, 'edit/' . $userId);
 
         if ($method != 'POST' || ($method == 'POST' && !$form->validate())) {

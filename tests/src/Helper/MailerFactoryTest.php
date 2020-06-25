@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Helper;
 
 use PHPCensor\Helper\MailerFactory;
@@ -7,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for the ProjectService class.
+ *
  * @author Dan Cryer <dan@block8.co.uk>
  */
 class MailerFactoryTest extends TestCase

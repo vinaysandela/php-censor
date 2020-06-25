@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Security\Authentication\UserProvider;
 
 use PHPCensor\Model\User;
@@ -20,7 +22,7 @@ class Internal extends AbstractProvider implements LoginPasswordProviderInterfac
      */
     public function verifyPassword(User $user, $password)
     {
-        return password_verify($password, $user->getHash());
+        return \password_verify($password, $user->getHash());
     }
 
     public function checkRequirements()

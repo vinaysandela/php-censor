@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use Exception;
@@ -30,6 +32,7 @@ interface CommandExecutorInterface
      * @param string       $priorityPath
      * @param string       $binaryPath
      * @param array        $binaryName
+     *
      * @return string
      *
      * @throws Exception when no binary has been found.

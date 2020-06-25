@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use PHPCensor\Model\Project;

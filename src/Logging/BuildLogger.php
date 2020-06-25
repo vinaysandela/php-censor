@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Logging;
 
 use Exception;
@@ -47,7 +49,7 @@ class BuildLogger implements LoggerAwareInterface
             return;
         }
 
-        if (!is_array($message)) {
+        if (!\is_array($message)) {
             $message = [$message];
         }
 

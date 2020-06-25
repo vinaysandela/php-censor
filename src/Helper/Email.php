@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use PHPCensor\Builder;
@@ -30,8 +32,10 @@ class Email
 
     /**
      * Set the email's To: header.
+     *
      * @param string $email
      * @param string|null $name
+     *
      * @return $this
      */
     public function setEmailTo($email, $name = null)
@@ -43,8 +47,10 @@ class Email
 
     /**
      * Add an address to the email's CC header.
+     *
      * @param string $email
      * @param string|null $name
+     *
      * @return $this
      */
     public function addCc($email, $name = null)
@@ -56,7 +62,9 @@ class Email
 
     /**
      * Set the email subject.
+     *
      * @param string $subject
+     *
      * @return $this
      */
     public function setSubject($subject)
@@ -68,7 +76,9 @@ class Email
 
     /**
      * Set the email body.
+     *
      * @param string $body
+     *
      * @return $this
      */
     public function setBody($body)
@@ -80,7 +90,9 @@ class Email
 
     /**
      * Set whether or not the email body is HTML.
+     *
      * @param bool $isHtml
+     *
      * @return $this
      */
     public function setHtml($isHtml = false)
@@ -102,13 +114,13 @@ class Email
             self::DEFAULT_FROM
         );
 
-        if (strpos($from, '<') === false) {
-            return [(string)trim($from) => 'PHP Censor'];
+        if (\strpos($from, '<') === false) {
+            return [(string)\trim($from) => 'PHP Censor'];
         }
 
-        preg_match('#^(.*?)<(.*?)>$#ui', $from, $fromParts);
+        \preg_match('#^(.*?)<(.*?)>$#ui', $from, $fromParts);
 
-        return [trim($fromParts[2]) => trim($fromParts[1])];
+        return [\trim($fromParts[2]) => \trim($fromParts[1])];
     }
 
     /**
@@ -122,7 +134,7 @@ class Email
     {
         $smtpServer = $this->config->get('php-censor.email_settings.smtp_address');
         if (null !== $builder) {
-            $builder->logDebug(sprintf("SMTP: '%s'", !empty($smtpServer) ? 'true' : 'false'));
+            $builder->logDebug(\sprintf("SMTP: '%s'", !empty($smtpServer) ? 'true' : 'false'));
         }
 
         $factory = new MailerFactory($this->config->get('php-censor'));
@@ -137,15 +149,15 @@ class Email
             $message->setContentType('text/html');
         }
 
-        if (is_array($this->emailCc) && count($this->emailCc)) {
+        if (\is_array($this->emailCc) && \count($this->emailCc)) {
             $message->setCc($this->emailCc);
         }
 
-        ob_start();
+        \ob_start();
 
         $result = $mailer->send($message);
 
-        $rawOutput = ob_get_clean();
+        $rawOutput = \ob_get_clean();
 
         if ($rawOutput) {
             $builder->getBuildLogger()->logWarning($rawOutput);

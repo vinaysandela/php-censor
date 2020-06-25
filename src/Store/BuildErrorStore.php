@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Store;
 
 use Exception;
@@ -51,7 +53,7 @@ class BuildErrorStore extends Store
      */
     public function getById($id, $useConnection = 'read')
     {
-        if (is_null($id)) {
+        if (\is_null($id)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -84,7 +86,7 @@ class BuildErrorStore extends Store
      */
     public function getByBuildId($buildId, $limit = null, $offset = 0, $plugin = null, $severity = null, $isNew = null)
     {
-        if (is_null($buildId)) {
+        if (\is_null($buildId)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -130,14 +132,13 @@ class BuildErrorStore extends Store
             $map = function ($item) {
                 return new BuildError($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 
     /**
@@ -186,9 +187,8 @@ class BuildErrorStore extends Store
             $res = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return (int)$res['total'];
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -224,12 +224,11 @@ class BuildErrorStore extends Store
             $map = function ($item) {
                 return $item['plugin'];
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
             return $rtn;
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -265,12 +264,11 @@ class BuildErrorStore extends Store
             $map = function ($item) {
                 return (int)$item['severity'];
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
             return $rtn;
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -280,6 +278,7 @@ class BuildErrorStore extends Store
      * @param string $hash
      *
      * @return bool
+     *
      * @throws Exception
      */
     public function getIsNewError($projectId, $hash)
@@ -305,7 +304,9 @@ class BuildErrorStore extends Store
 
     /**
      * @param $buildId
+     *
      * @return array
+     *
      * @throws Exception
      */
     public function getErrorAmountPerPluginForBuild($buildId)

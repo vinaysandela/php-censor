@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Plugin\Util;
 
 use PHPCensor\Plugin\Util\Factory;
@@ -113,7 +115,7 @@ class FactoryTest extends TestCase
         $pluginClass = $this->getFakePluginClassName('ExamplePluginFull');
 
         $expectedArgs = [
-            'thing' => "stuff"
+            'thing' => "stuff",
         ];
 
         $this->registerBuildAndBuilder();

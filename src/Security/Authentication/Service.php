@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Security\Authentication;
 
 use PHPCensor\Config;
@@ -28,8 +30,8 @@ class Service
                 'php-censor.security.auth_providers',
                 [
                     'internal' => [
-                        'type' => 'internal'
-                    ]
+                        'type' => 'internal',
+                    ],
                 ]
             );
 
@@ -53,8 +55,8 @@ class Service
      */
     public static function buildProvider($key, $config)
     {
-        $class = ucfirst($config['type']);
-        if (class_exists('\\PHPCensor\\Security\\Authentication\\UserProvider\\' . $class)) {
+        $class = \ucfirst($config['type']);
+        if (\class_exists('\\PHPCensor\\Security\\Authentication\\UserProvider\\' . $class)) {
             $class = '\\PHPCensor\\Security\\Authentication\\UserProvider\\' . $class;
         }
 

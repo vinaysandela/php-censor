@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Model\Build;
 use PHPCensor\Model\BuildError;
@@ -44,7 +45,7 @@ class SecurityChecker extends Plugin implements ZeroConfigPluginInterface
             $this->allowedWarnings = -1;
         }
 
-        if (array_key_exists('allowed_warnings', $options)) {
+        if (\array_key_exists('allowed_warnings', $options)) {
             $this->allowedWarnings = (int)$options['allowed_warnings'];
         }
     }
@@ -56,7 +57,7 @@ class SecurityChecker extends Plugin implements ZeroConfigPluginInterface
     {
         $path = $build->getBuildPath() . 'composer.lock';
 
-        if (file_exists($path) && $stage === Build::STAGE_TEST) {
+        if (\file_exists($path) && $stage === Build::STAGE_TEST) {
             return true;
         }
 
@@ -72,7 +73,7 @@ class SecurityChecker extends Plugin implements ZeroConfigPluginInterface
         }
         $success  = true;
         $result   = $checker->check($this->builder->buildPath . 'composer.lock');
-        $warnings = json_decode((string)$result, true);
+        $warnings = \json_decode((string)$result, true);
 
         if ($warnings) {
             foreach ($warnings as $library => $warning) {

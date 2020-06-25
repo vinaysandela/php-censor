@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use Exception;
@@ -79,7 +81,7 @@ class BuildStatusController extends WebController
     protected function getPhpunitCoverage(Project $project, $branch, $type = 'lines')
     {
         $coverage = 0;
-        if (!in_array($type, ['classes', 'methods', 'lines'], true)) {
+        if (!\in_array($type, ['classes', 'methods', 'lines'], true)) {
             $type = 'lines';
         }
 
@@ -181,7 +183,7 @@ class BuildStatusController extends WebController
         ];
 
         $coverage = $this->getPhpunitCoverage($project, $branch, $type);
-        $imageUrl = sprintf(
+        $imageUrl = \sprintf(
             'http://img.shields.io/badge/%s-%s-%s.svg?style=%s',
             $label,
             $coverage. '%25',
@@ -196,13 +198,13 @@ class BuildStatusController extends WebController
         }
 
         $cacheDir  = RUNTIME_DIR . 'status_cache/';
-        $cacheFile = $cacheDir . md5($imageUrl) . '.svg';
-        if (!is_file($cacheFile)) {
-            $image = file_get_contents($imageUrl);
-            file_put_contents($cacheFile, $image);
+        $cacheFile = $cacheDir . \md5($imageUrl) . '.svg';
+        if (!\is_file($cacheFile)) {
+            $image = \file_get_contents($imageUrl);
+            \file_put_contents($cacheFile, $image);
         }
 
-        $image = file_get_contents($cacheFile);
+        $image = \file_get_contents($cacheFile);
 
         $response = new Response();
 
@@ -237,7 +239,7 @@ class BuildStatusController extends WebController
 
         $status = $this->getStatus($project, $branch);
 
-        if (is_null($status)) {
+        if (\is_null($status)) {
             $response = new RedirectResponse();
             $response->setHeader('Location', '/');
 
@@ -245,7 +247,7 @@ class BuildStatusController extends WebController
         }
 
         $color    = ($status == 'passing') ? 'green' : 'red';
-        $imageUrl = sprintf(
+        $imageUrl = \sprintf(
             'http://img.shields.io/badge/%s-%s-%s.svg?style=%s',
             $label,
             $status,
@@ -260,13 +262,13 @@ class BuildStatusController extends WebController
         }
 
         $cacheDir  = RUNTIME_DIR . 'status_cache/';
-        $cacheFile = $cacheDir . md5($imageUrl) . '.svg';
-        if (!is_file($cacheFile)) {
-            $image = file_get_contents($imageUrl);
-            file_put_contents($cacheFile, $image);
+        $cacheFile = $cacheDir . \md5($imageUrl) . '.svg';
+        if (!\is_file($cacheFile)) {
+            $image = \file_get_contents($imageUrl);
+            \file_put_contents($cacheFile, $image);
         }
 
-        $image = file_get_contents($cacheFile);
+        $image = \file_get_contents($cacheFile);
 
         $response = new Response();
 
@@ -298,7 +300,7 @@ class BuildStatusController extends WebController
 
         $builds = $this->getLatestBuilds($projectId, $branch);
 
-        if (count($builds)) {
+        if (\count($builds)) {
             $this->view->latest = $builds[0];
         }
 

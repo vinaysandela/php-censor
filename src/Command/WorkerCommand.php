@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use Exception;
@@ -9,10 +11,10 @@ use PHPCensor\Config;
 use PHPCensor\Service\BuildService;
 use PHPCensor\Worker\BuildWorker;
 use RuntimeException;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 
 /**
  * Worker Command - Starts the BuildWorker, which pulls jobs from beanstalkd
@@ -90,7 +92,7 @@ class WorkerCommand extends LoggingCommand
             } elseif ('idle' === $value) {
                 $priority = self::MAX_QUEUE_PRIORITY; // low priority, stop late
             } else {
-                $msg = sprintf('Invalid value "%s" for --stop-worker, valid are soon, done and idle;', $value);
+                $msg = \sprintf('Invalid value "%s" for --stop-worker, valid are soon, done and idle;', $value);
                 throw new InvalidArgumentException($msg);
             }
             $jobData = [];

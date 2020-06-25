@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model;
 
 use PHPCensor\Model\Base\Project as BaseProject;
@@ -52,7 +54,7 @@ class Project extends BaseProject
     {
         $criteria = [
             'branch'     => $branch,
-            'project_id' => $this->getId()
+            'project_id' => $this->getId(),
         ];
 
         if (isset($status)) {
@@ -62,8 +64,8 @@ class Project extends BaseProject
         $order  = ['id' => 'DESC'];
         $builds = Factory::getStore('Build')->getWhere($criteria, 1, 0, $order);
 
-        if (is_array($builds['items']) && count($builds['items'])) {
-            $latest = array_shift($builds['items']);
+        if (\is_array($builds['items']) && \count($builds['items'])) {
+            $latest = \array_shift($builds['items']);
 
             if (isset($latest) && $latest instanceof Build) {
                 return $latest;
@@ -84,13 +86,13 @@ class Project extends BaseProject
     {
         $criteria = [
             'branch'     => $branch,
-            'project_id' => $this->getId()
+            'project_id' => $this->getId(),
         ];
         $order  = ['id' => 'DESC'];
         $builds = Factory::getStore('Build')->getWhere($criteria, 1, 1, $order);
 
-        if (is_array($builds['items']) && count($builds['items'])) {
-            $previous = array_shift($builds['items']);
+        if (\is_array($builds['items']) && \count($builds['items'])) {
+            $previous = \array_shift($builds['items']);
 
             if (isset($previous) && $previous instanceof Build) {
                 return $previous;
@@ -203,12 +205,12 @@ class Project extends BaseProject
     {
         $yamlParser          = new YamlParser();
         $environmentsConfig  = $yamlParser->parse($value);
-        $environmentsNames   = !empty($environmentsConfig) ? array_keys($environmentsConfig) : [];
+        $environmentsNames   = !empty($environmentsConfig) ? \array_keys($environmentsConfig) : [];
         $currentEnvironments = $this->getEnvironmentsObjects();
         $store               = $this->getEnvironmentStore();
         foreach ($currentEnvironments['items'] as $environment) {
             /** @var Environment $environment */
-            $key = array_search($environment->getName(), $environmentsNames);
+            $key = \array_search($environment->getName(), $environmentsNames);
             if ($key !== false) {
                 // already exist
                 unset($environmentsNames[$key]);
@@ -244,7 +246,7 @@ class Project extends BaseProject
         $defaultBranch     = ($branch === $this->getDefaultBranch());
         foreach ($environments['items'] as $environment) {
             /** @var Environment $environment */
-            if ($defaultBranch || in_array($branch, $environment->getBranches())) {
+            if ($defaultBranch || \in_array($branch, $environment->getBranches())) {
                 $environmentsIds[] = $environment->getId();
             }
         }

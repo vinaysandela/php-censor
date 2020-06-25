@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use DateTime;
@@ -54,7 +56,7 @@ class GroupController extends WebController
             $projectsActive   = Factory::getStore('Project')->getByGroupId($group->getId(), false);
             $projectsArchived = Factory::getStore('Project')->getByGroupId($group->getId(), true);
 
-            $thisGroup['projects'] = array_merge($projectsActive['items'], $projectsArchived['items']);
+            $thisGroup['projects'] = \array_merge($projectsActive['items'], $projectsArchived['items']);
             $groups[]              = $thisGroup;
         }
 
@@ -73,7 +75,7 @@ class GroupController extends WebController
     {
         $this->requireAdmin();
 
-        if (!is_null($groupId)) {
+        if (!\is_null($groupId)) {
             $group = $this->groupStore->getById($groupId);
         } else {
             $group = new ProjectGroup();
@@ -81,7 +83,7 @@ class GroupController extends WebController
 
         if ($this->request->getMethod() == 'POST') {
             $group->setTitle($this->getParam('title'));
-            if (is_null($groupId)) {
+            if (\is_null($groupId)) {
                 /** @var User $user */
                 $user = $this->getUser();
 
@@ -100,7 +102,7 @@ class GroupController extends WebController
         $form = new Form();
 
         $form->setMethod('POST');
-        $form->setAction(APP_URL . 'group/edit' . (!is_null($groupId) ? '/' . $groupId : ''));
+        $form->setAction(APP_URL . 'group/edit' . (!\is_null($groupId) ? '/' . $groupId : ''));
 
         $form->addField(new Form\Element\Csrf('group_form'));
 
@@ -122,7 +124,9 @@ class GroupController extends WebController
 
     /**
      * Delete a project group.
+     *
      * @param $groupId
+     *
      * @return RedirectResponse
      */
     public function delete($groupId)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use DateTime;
@@ -324,7 +326,7 @@ class Builder implements LoggerAwareInterface
         if (isset($trend[1])) {
             $previousBuild = $this->store->getById($trend[1]['build_id']);
             if ($previousBuild &&
-                !in_array(
+                !\in_array(
                     $previousBuild->getStatus(),
                     [Build::STATUS_PENDING, Build::STATUS_RUNNING],
                     true
@@ -373,6 +375,7 @@ class Builder implements LoggerAwareInterface
      * @param string       $priorityPath
      * @param string       $binaryPath
      * @param array        $binaryName
+     *
      * @return string
      *
      * @throws Exception when no binary has been found.
@@ -415,7 +418,7 @@ class Builder implements LoggerAwareInterface
             throw new Exception('Could not create a working copy.');
         }
 
-        chdir($this->buildPath);
+        \chdir($this->buildPath);
 
         $this->interpolator->setupInterpolationVars(
             $this->build,
@@ -433,14 +436,14 @@ class Builder implements LoggerAwareInterface
         }
 
         if (!empty($this->config['build_settings']['binary_path'])) {
-            $this->binaryPath = rtrim(
+            $this->binaryPath = \rtrim(
                 $this->interpolate($this->config['build_settings']['binary_path']),
                 '/\\'
             ) . '/';
         }
 
         if (!empty($this->config['build_settings']['priority_path']) &&
-            in_array(
+            \in_array(
                 $this->config['build_settings']['priority_path'],
                 Plugin::AVAILABLE_PRIORITY_PATHS,
                 true
@@ -455,12 +458,12 @@ class Builder implements LoggerAwareInterface
             $directory = $this->config['build_settings']['directory'];
         }
 
-        $this->directory = rtrim(
+        $this->directory = \rtrim(
             $this->interpolate($directory),
             '/\\'
         ) . '/';
 
-        $this->buildLogger->logSuccess(sprintf('Working copy created: %s', $this->buildPath));
+        $this->buildLogger->logSuccess(\sprintf('Working copy created: %s', $this->buildPath));
 
         return true;
     }

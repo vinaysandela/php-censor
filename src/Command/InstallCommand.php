@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use DateTime;
@@ -19,7 +21,6 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Dumper;
 
@@ -157,8 +158,8 @@ class InstallCommand extends Command
      */
     protected function verifyNotInstalled(OutputInterface $output)
     {
-        if (file_exists($this->configPath)) {
-            $content = file_get_contents($this->configPath);
+        if (\file_exists($this->configPath)) {
+            $content = \file_get_contents($this->configPath);
 
             if (!empty($content)) {
                 $output->writeln(
@@ -184,17 +185,18 @@ class InstallCommand extends Command
         $output->writeln('Checking requirements...');
         $errors = false;
 
-        if (!(version_compare(PHP_VERSION, '7.1.0') >= 0)) {
+        if (!(\version_compare(PHP_VERSION, '7.1.0') >= 0)) {
             $output->writeln('');
             $output->writeln(
-                '<error>PHP Censor requires at least PHP 7.1.0! Installed PHP ' . PHP_VERSION . '</error>');
+                '<error>PHP Censor requires at least PHP 7.1.0! Installed PHP ' . PHP_VERSION . '</error>'
+            );
             $errors = true;
         }
 
         $requiredExtensions = ['PDO', 'xml', 'json', 'curl', 'openssl'];
 
         foreach ($requiredExtensions as $extension) {
-            if (!extension_loaded($extension)) {
+            if (!\extension_loaded($extension)) {
                 $output->writeln('');
                 $output->writeln('<error>Extension required: ' . $extension . '</error>');
                 $errors = true;
@@ -204,7 +206,7 @@ class InstallCommand extends Command
         $requiredFunctions = ['exec', 'shell_exec', 'proc_open'];
 
         foreach ($requiredFunctions as $function) {
-            if (!function_exists($function)) {
+            if (!\function_exists($function)) {
                 $output->writeln('');
                 $output->writeln(
                     '<error>PHP Censor needs to be able to call the ' . $function .
@@ -230,6 +232,7 @@ class InstallCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @return array
      */
     protected function getAdminInformation(InputInterface $input, OutputInterface $output)
@@ -241,7 +244,7 @@ class InstallCommand extends Command
 
         // Function to validate email address.
         $mailValidator = function ($answer) {
-            if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+            if (!\filter_var($answer, FILTER_VALIDATE_EMAIL)) {
                 throw new InvalidArgumentException('Must be a valid email address.');
             }
 
@@ -419,7 +422,7 @@ class InstallCommand extends Command
 
         if (!$dbType = $input->getOption('db-type')) {
             $questionType = new Question('Enter your database type ("mysql" or "pgsql"): ');
-            $dbType       = trim(strtolower($helper->ask($input, $output, $questionType)));
+            $dbType       = \trim(\strtolower($helper->ask($input, $output, $questionType)));
         }
 
         if (!$dbHost = $input->getOption('db-host')) {
@@ -427,7 +430,7 @@ class InstallCommand extends Command
                 'Enter your database host (default: "localhost"): ',
                 'localhost'
             );
-            $dbHost = trim($helper->ask($input, $output, $questionHost));
+            $dbHost = \trim($helper->ask($input, $output, $questionHost));
         }
 
         $defaultPort = 3306;
@@ -462,7 +465,7 @@ class InstallCommand extends Command
                 'Enter your database name (default: "php-censor-db"): ',
                 'php-censor-db'
             );
-            $dbName = trim($helper->ask($input, $output, $questionDb));
+            $dbName = \trim($helper->ask($input, $output, $questionDb));
         }
 
         if (!$dbUser = $input->getOption('db-user')) {
@@ -470,7 +473,7 @@ class InstallCommand extends Command
                 'Enter your database user (default: "php-censor-user"): ',
                 'php-censor-user'
             );
-            $dbUser = trim($helper->ask($input, $output, $questionUser));
+            $dbUser = \trim($helper->ask($input, $output, $questionUser));
         }
 
         if (!$dbPass = $input->getOption('db-password')) {
@@ -483,7 +486,7 @@ class InstallCommand extends Command
         $dbServers  = [
             [
                 'host' => $dbHost,
-            ]
+            ],
         ];
 
         if ($dbType === 'pgsql' && !empty($dbPgsqlSslmode)) {
@@ -558,6 +561,7 @@ class InstallCommand extends Command
 
     /**
      * Write the config.yml file.
+     *
      * @param array $config
      */
     protected function writeConfigFile(array $config)
@@ -565,21 +569,21 @@ class InstallCommand extends Command
         $dumper = new Dumper();
         $yaml   = $dumper->dump($config, 4);
 
-        file_put_contents($this->configPath, $yaml);
+        \file_put_contents($this->configPath, $yaml);
     }
 
     protected function setupDatabase(OutputInterface $output)
     {
         $output->write('Setting up your database...');
 
-        exec(
+        \exec(
             (ROOT_DIR . 'bin/console php-censor-migrations:migrate'),
             $outputMigration,
             $status
         );
 
         $output->writeln('');
-        $output->writeln(implode(PHP_EOL, $outputMigration));
+        $output->writeln(\implode(PHP_EOL, $outputMigration));
         if (0 == $status) {
             $output->writeln('<info>OK</info>');
 
@@ -655,7 +659,7 @@ class InstallCommand extends Command
     {
         $config = Config::getInstance();
 
-        if (file_exists($this->configPath)) {
+        if (\file_exists($this->configPath)) {
             $config->loadYaml($this->configPath);
         }
     }

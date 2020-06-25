@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Logging;
 
 use Monolog\Handler\AbstractProcessingHandler;
@@ -33,6 +35,7 @@ class OutputLogHandler extends AbstractProcessingHandler
 
     /**
      * Write a log entry to the terminal.
+     *
      * @param array $record
      */
     protected function write(array $record)

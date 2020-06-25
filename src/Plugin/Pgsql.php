@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -87,7 +89,7 @@ class Pgsql extends Plugin
             $this->user = $this->builder->interpolate($buildSettings['pgsql']['user']);
         }
 
-        if (array_key_exists('password', $buildSettings['pgsql'])) {
+        if (\array_key_exists('password', $buildSettings['pgsql'])) {
             $this->password = $this->builder->interpolate($buildSettings['pgsql']['password']);
         }
 
@@ -98,15 +100,16 @@ class Pgsql extends Plugin
 
     /**
      * Connects to PgSQL and runs a specified set of queries.
+     *
      * @return bool
      */
     public function execute()
     {
         try {
-            $pdoOptions = array_merge([
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            $pdoOptions = \array_merge([
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ], $this->pdoOptions);
-            $dsn     = sprintf('pgsql:host=%s;port=%s', $this->host, $this->port);
+            $dsn     = \sprintf('pgsql:host=%s;port=%s', $this->host, $this->port);
 
             if (null !== $this->dbName) {
                 $dsn .= ';dbname=' . $this->dbName;

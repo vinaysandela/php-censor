@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Builder;
@@ -40,7 +42,7 @@ class Wipe extends Plugin
             return true;
         }
 
-        if (is_dir($this->directory)) {
+        if (\is_dir($this->directory)) {
             $cmd = 'rm -Rf "%s"';
 
             return $this->builder->executeCommand($cmd, $this->directory);

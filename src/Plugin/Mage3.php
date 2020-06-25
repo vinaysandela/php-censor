@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * PHPCensor - Continuous Integration for PHP
  */
@@ -72,46 +74,48 @@ class Mage3 extends Plugin
 
     /**
      * Get mage log lines
+     *
      * @return array
+     *
      * @throws Exception
      */
     protected function getMageLog()
     {
         $logsDir = $this->build->getBuildPath() . (!empty($this->mageLogDir) ? '/' . $this->mageLogDir : '');
-        if (!is_dir($logsDir)) {
+        if (!\is_dir($logsDir)) {
             throw new Exception('Log directory not found');
         }
 
-        $list = scandir($logsDir);
+        $list = \scandir($logsDir);
         if ($list === false) {
             throw new Exception('Log dir read fail');
         }
 
-        $list = array_filter($list, function ($name) {
-            return preg_match('/^\d+_\d+\.log$/', $name);
+        $list = \array_filter($list, function ($name) {
+            return \preg_match('/^\d+_\d+\.log$/', $name);
         });
         if (empty($list)) {
             throw new Exception('Log dir filter fail');
         }
 
-        $res = sort($list);
+        $res = \sort($list);
         if ($res === false) {
             throw new Exception('Logs sort fail');
         }
 
-        $lastLogFile = end($list);
+        $lastLogFile = \end($list);
         if ($lastLogFile === false) {
             throw new Exception('Get last Log name fail');
         }
 
-        $logContent = file_get_contents($logsDir . '/' . $lastLogFile);
+        $logContent = \file_get_contents($logsDir . '/' . $lastLogFile);
         if ($logContent === false) {
             throw new Exception('Get last Log content fail');
         }
 
-        $lines = explode("\n", $logContent);
-        $lines = array_map('trim', $lines);
-        $lines = array_filter($lines);
+        $lines = \explode("\n", $logContent);
+        $lines = \array_map('trim', $lines);
+        $lines = \array_filter($lines);
 
         return $lines;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Store;
 
 use Exception;
@@ -54,7 +56,7 @@ class ProjectStore extends Store
      */
     public function getById($id, $useConnection = 'read')
     {
-        if (is_null($id)) {
+        if (\is_null($id)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -87,7 +89,7 @@ class ProjectStore extends Store
             throw new HttpException('Values passed to ' . __FUNCTION__ . ' cannot be empty.');
         }
 
-        $query = 'SELECT * FROM {{' . $this->tableName . '}} WHERE {{id}} IN ('.implode(', ', array_map('intval', $values)).')';
+        $query = 'SELECT * FROM {{' . $this->tableName . '}} WHERE {{id}} IN ('.\implode(', ', \array_map('intval', $values)).')';
         $stmt = Database::getConnection($useConnection)->prepareCommon($query);
 
         $rtn = [];
@@ -113,7 +115,7 @@ class ProjectStore extends Store
      */
     public function getByTitle($title, $limit = 1000, $useConnection = 'read')
     {
-        if (is_null($title)) {
+        if (\is_null($title)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -129,14 +131,13 @@ class ProjectStore extends Store
             $map = function ($item) {
                 return new Project($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 
     /**
@@ -158,12 +159,11 @@ class ProjectStore extends Store
             $map = function ($item) {
                 return $item['branch'];
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
             return $rtn;
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -188,15 +188,14 @@ class ProjectStore extends Store
             $map = function ($item) {
                 return new Project($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 
     /**
@@ -213,7 +212,7 @@ class ProjectStore extends Store
      */
     public function getByGroupId($groupId, $archived = false, $limit = 1000, $useConnection = 'read')
     {
-        if (is_null($groupId)) {
+        if (\is_null($groupId)) {
             throw new Exception('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
         $archived = (int)$archived;
@@ -231,13 +230,12 @@ class ProjectStore extends Store
             $map = function ($item) {
                 return new Project($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 }

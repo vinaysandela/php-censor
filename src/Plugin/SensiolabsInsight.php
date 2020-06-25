@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -52,23 +54,23 @@ class SensiolabsInsight extends Plugin
         parent::__construct($builder, $build, $options);
 
         $this->allowedWarnings = 0;
-        if (array_key_exists('allowed_warnings', $options)) {
+        if (\array_key_exists('allowed_warnings', $options)) {
             $this->allowedWarnings = (int)$options['allowed_warnings'];
         }
 
-        if (array_key_exists('user_uuid', $options)) {
+        if (\array_key_exists('user_uuid', $options)) {
             $this->userUuid = $options['user_uuid'];
         }
 
-        if (array_key_exists('api_token', $options)) {
+        if (\array_key_exists('api_token', $options)) {
             $this->apiToken = $options['api_token'];
         }
 
-        if (array_key_exists('project_uuid', $options)) {
+        if (\array_key_exists('project_uuid', $options)) {
             $this->projectUuid = $options['project_uuid'];
         }
-        
-        if (array_key_exists('executable', $options)) {
+
+        if (\array_key_exists('executable', $options)) {
             $this->executable = $this->builder->interpolate($options['executable']);
         } else {
             $this->executable = $this->findBinary('insight');
@@ -86,7 +88,7 @@ class SensiolabsInsight extends Plugin
 
         $this->executeSensiolabsInsight($insightBinaryPath);
 
-        $errorCount = $this->processReport(trim($this->builder->getLastOutput()));
+        $errorCount = $this->processReport(\trim($this->builder->getLastOutput()));
         $this->build->storeMeta((self::pluginName() . '-warnings'), $errorCount);
 
         return $this->wasLastExecSuccessful($errorCount);
@@ -103,7 +105,7 @@ class SensiolabsInsight extends Plugin
      */
     protected function processReport($xmlString)
     {
-        $xml = simplexml_load_string($xmlString);
+        $xml = \simplexml_load_string($xmlString);
 
         if ($xml === false) {
             $this->builder->log($xmlString);
@@ -114,7 +116,7 @@ class SensiolabsInsight extends Plugin
 
         foreach ($xml->file as $file) {
             $fileName = (string)$file['name'];
-            $fileName = str_replace($this->builder->buildPath, '', $fileName);
+            $fileName = \str_replace($this->builder->buildPath, '', $fileName);
 
             foreach ($file->violation as $violation) {
                 $warnings++;
@@ -136,6 +138,7 @@ class SensiolabsInsight extends Plugin
 
     /**
      * Execute Sensiolabs Insight.
+     *
      * @param $binaryPath
      */
     protected function executeSensiolabsInsight($binaryPath)

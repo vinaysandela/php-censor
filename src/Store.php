@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use Exception;
@@ -68,24 +70,24 @@ abstract class Store
         foreach ($where as $key => $value) {
             $key = $this->fieldCheck($key);
 
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 $params[] = $value;
                 $wheres[] = $key . ' = ?';
             }
         }
 
-        if (count($wheres)) {
-            $query .= ' WHERE (' . implode(' ' . $whereType . ' ', $wheres) . ')';
-            $countQuery .= ' WHERE (' . implode(' ' . $whereType . ' ', $wheres) . ')';
+        if (\count($wheres)) {
+            $query .= ' WHERE (' . \implode(' ' . $whereType . ' ', $wheres) . ')';
+            $countQuery .= ' WHERE (' . \implode(' ' . $whereType . ' ', $wheres) . ')';
         }
 
-        if (count($order)) {
+        if (\count($order)) {
             $orders = [];
             foreach ($order as $key => $value) {
                 $orders[] = $this->fieldCheck($key) . ' ' . $value;
             }
 
-            $query .= ' ORDER BY ' . implode(', ', $orders);
+            $query .= ' ORDER BY ' . \implode(', ', $orders);
         }
 
         if ($limit) {
@@ -124,7 +126,7 @@ abstract class Store
     public function save(Model $obj, $saveAllColumns = false)
     {
         if (!($obj instanceof $this->modelName)) {
-            throw new InvalidArgumentException(get_class($obj) . ' is an invalid model type for this store.');
+            throw new InvalidArgumentException(\get_class($obj) . ' is an invalid model type for this store.');
         }
 
         $data = $obj->getDataArray();
@@ -150,7 +152,7 @@ abstract class Store
     {
         $rtn = null;
         $data = $obj->getDataArray();
-        $modified = ($saveAllColumns) ? array_keys($data) : $obj->getModified();
+        $modified = ($saveAllColumns) ? \array_keys($data) : $obj->getModified();
 
         $updates      = [];
         $updateParams = [];
@@ -159,11 +161,11 @@ abstract class Store
             $updateParams[] = [$key, $data[$key]];
         }
 
-        if (count($updates)) {
-            $qs = sprintf(
+        if (\count($updates)) {
+            $qs = \sprintf(
                 'UPDATE {{%s}} SET %s WHERE {{%s}} = :primaryKey',
                 $this->tableName,
-                implode(', ', $updates),
+                \implode(', ', $updates),
                 $this->primaryKey
             );
             $q  = Database::getConnection('write')->prepareCommon($qs);
@@ -195,7 +197,7 @@ abstract class Store
     {
         $rtn      = null;
         $data     = $obj->getDataArray();
-        $modified = ($saveAllColumns) ? array_keys($data) : $obj->getModified();
+        $modified = ($saveAllColumns) ? \array_keys($data) : $obj->getModified();
 
         $cols    = [];
         $values  = [];
@@ -206,12 +208,12 @@ abstract class Store
             $qParams[':' . $key] = $data[$key];
         }
 
-        if (count($cols)) {
-            $qs = sprintf(
+        if (\count($cols)) {
+            $qs = \sprintf(
                 'INSERT INTO {{%s}} (%s) VALUES (%s)',
                 $this->tableName,
-                implode(', ', $cols),
-                implode(', ', $values)
+                \implode(', ', $cols),
+                \implode(', ', $values)
             );
             $q = Database::getConnection('write')->prepareCommon($qs);
 
@@ -234,14 +236,14 @@ abstract class Store
     public function delete(Model $obj)
     {
         if (!($obj instanceof $this->modelName)) {
-            throw new InvalidArgumentException(get_class($obj) . ' is an invalid model type for this store.');
+            throw new InvalidArgumentException(\get_class($obj) . ' is an invalid model type for this store.');
         }
 
         $data = $obj->getDataArray();
 
         $q = Database::getConnection('write')
             ->prepareCommon(
-                sprintf(
+                \sprintf(
                     'DELETE FROM {{%s}} WHERE {{%s}} = :primaryKey',
                     $this->tableName,
                     $this->primaryKey
@@ -266,7 +268,7 @@ abstract class Store
             throw new InvalidArgumentException('You cannot have an empty field name.');
         }
 
-        if (strpos($field, '.') === false) {
+        if (\strpos($field, '.') === false) {
             return '{{' . $this->tableName . '}}.{{' . $field . '}}';
         }
 

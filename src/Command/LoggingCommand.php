@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use Monolog\Handler\AbstractHandler;
@@ -56,10 +58,10 @@ abstract class LoggingCommand extends Command
 
         if ($output->isDebug()) {
             $this->logger->notice(
-                sprintf('Command "%s" started in debug mode (-vvv).', $this->getName())
+                \sprintf('Command "%s" started in debug mode (-vvv).', $this->getName())
             );
 
-            define('DEBUG_MODE', true);
+            \define('DEBUG_MODE', true);
         }
     }
 

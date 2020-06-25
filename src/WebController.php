@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use PHPCensor\Exception\HttpException;
 use PHPCensor\Exception\HttpException\ForbiddenException;
-use Symfony\Component\HttpFoundation\Request;
 use PHPCensor\Http\Response;
 use PHPCensor\Model\User;
 use PHPCensor\Store\Factory;
 use PHPCensor\Store\UserStore;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class WebController extends Controller
 {
@@ -40,8 +42,8 @@ abstract class WebController extends Controller
     {
         parent::__construct($config, $request);
 
-        $class           = explode('\\', get_class($this));
-        $this->className = substr(array_pop($class), 0, -10);
+        $class           = \explode('\\', \get_class($this));
+        $this->className = \substr(\array_pop($class), 0, -10);
     }
 
     public function init()
@@ -51,7 +53,7 @@ abstract class WebController extends Controller
 
             $this->layout->title      = 'PHP Censor';
             $this->layout->breadcrumb = [];
-            $this->layout->version    = trim(file_get_contents(ROOT_DIR . 'VERSION.md'));
+            $this->layout->version    = \trim(\file_get_contents(ROOT_DIR . 'VERSION.md'));
 
             $groups = [];
             $groupStore = Factory::getStore('ProjectGroup');
@@ -91,7 +93,7 @@ abstract class WebController extends Controller
         }
 
         $content = '';
-        if (is_string($result)) {
+        if (\is_string($result)) {
             $content = $result;
         } elseif ($this->view) {
             $content = $this->view->render();
@@ -125,7 +127,6 @@ abstract class WebController extends Controller
      * Check if the currently logged in user is an administrator.
      *
      * @return bool
-     *
      * @return bool
      *
      * @throws HttpException

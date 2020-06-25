@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use Exception;
@@ -8,6 +10,7 @@ use PHPCensor;
 use PHPCensor\BuildFactory;
 use PHPCensor\Exception\HttpException\NotFoundException;
 use PHPCensor\Form;
+use PHPCensor\Helper\Branch;
 use PHPCensor\Helper\Lang;
 use PHPCensor\Helper\SshKey;
 use PHPCensor\Http\Response\RedirectResponse;
@@ -16,12 +19,11 @@ use PHPCensor\Model\Project;
 use PHPCensor\Service\BuildService;
 use PHPCensor\Service\ProjectService;
 use PHPCensor\Store\BuildStore;
+use PHPCensor\Store\EnvironmentStore;
 use PHPCensor\Store\Factory;
 use PHPCensor\Store\ProjectStore;
 use PHPCensor\View;
 use PHPCensor\WebController;
-use PHPCensor\Helper\Branch;
-use PHPCensor\Store\EnvironmentStore;
 
 /**
  * Project Controller - Allows users to create, edit and view projects.
@@ -119,7 +121,7 @@ class ProjectController extends WebController
         $builds  = $this->getLatestBuildsHtml($projectId, $branch, $environment, (($page - 1) * $perPage), $perPage);
         $pages   = ($builds[1] === 0)
             ? 1
-            : (int)ceil($builds[1] / $perPage);
+            : (int)\ceil($builds[1] / $perPage);
 
         if ($page > $pages) {
             $page = $pages;
@@ -128,9 +130,9 @@ class ProjectController extends WebController
         $this->view->builds       = $builds[0];
         $this->view->total        = $builds[1];
         $this->view->project      = $project;
-        $this->view->branch       = urldecode($branch);
+        $this->view->branch       = \urldecode($branch);
         $this->view->branches     = $this->projectStore->getKnownBranches($projectId);
-        $this->view->environment  = urldecode($environment);
+        $this->view->environment  = \urldecode($environment);
         $this->view->environments = $project->getEnvironmentsNames();
         $this->view->page         = $page;
         $this->view->perPage      = $perPage;
@@ -179,10 +181,10 @@ class ProjectController extends WebController
             $params['environment'] = $environment;
         }
 
-        $urlPattern = $urlPattern . '?' . str_replace(
+        $urlPattern = $urlPattern . '?' . \str_replace(
             '%28%3Anum%29',
             '(:num)',
-            http_build_query(array_merge($params, ['page' => '(:num)']))
+            \http_build_query(\array_merge($params, ['page' => '(:num)']))
         );
         $paginator = new Paginator($total, $perPage, $page, $urlPattern);
 
@@ -275,6 +277,7 @@ class ProjectController extends WebController
      * @param int $projectId
      *
      * @return RedirectResponse
+     *
      * @throws PHPCensor\Exception\HttpException
      * @throws PHPCensor\Exception\HttpException\ForbiddenException
      */
@@ -295,6 +298,7 @@ class ProjectController extends WebController
      * @param int $projectId
      *
      * @return RedirectResponse
+     *
      * @throws PHPCensor\Exception\HttpException
      * @throws PHPCensor\Exception\HttpException\ForbiddenException
      */
@@ -314,6 +318,7 @@ class ProjectController extends WebController
      * @param int $projectId
      *
      * @return RedirectResponse
+     *
      * @throws PHPCensor\Exception\HttpException
      * @throws PHPCensor\Exception\HttpException\ForbiddenException
      */
@@ -369,7 +374,7 @@ class ProjectController extends WebController
 
         return [
             $view->render(),
-            (int)$builds['count']
+            (int)$builds['count'],
         ];
     }
 
@@ -403,13 +408,13 @@ class ProjectController extends WebController
             $view->key      = $values['ssh_public_key'];
 
             return $view->render();
-        } else {
-            $type          = $this->getParam('type', null);
-            $title         = $this->getParam('title', 'New Project');
-            $reference     = $this->getParam('reference', null);
-            $defaultBranch = $this->getParam('default_branch', null);
+        }
+        $type          = $this->getParam('type', null);
+        $title         = $this->getParam('title', 'New Project');
+        $reference     = $this->getParam('reference', null);
+        $defaultBranch = $this->getParam('default_branch', null);
 
-            $options = [
+        $options = [
                 'ssh_private_key'        => $this->getParam('ssh_private_key', null),
                 'ssh_public_key'         => $this->getParam('ssh_public_key', null),
                 'overwrite_build_config' => (bool)$this->getParam('overwrite_build_config', true),
@@ -421,15 +426,14 @@ class ProjectController extends WebController
                 'environments'           => $this->getParam('environments', null),
             ];
 
-            /** @var PHPCensor\Model\User $user */
-            $user    = $this->getUser();
-            $project = $this->projectService->createProject($title, $type, $reference, $user->getId(), $options);
+        /** @var PHPCensor\Model\User $user */
+        $user    = $this->getUser();
+        $project = $this->projectService->createProject($title, $type, $reference, $user->getId(), $options);
 
-            $response = new RedirectResponse();
-            $response->setHeader('Location', APP_URL.'project/view/' . $project->getId());
+        $response = new RedirectResponse();
+        $response->setHeader('Location', APP_URL.'project/view/' . $project->getId());
 
-            return $response;
-        }
+        return $response;
     }
 
     /**
@@ -452,19 +456,19 @@ class ProjectController extends WebController
         $values                 = $project->getDataArray();
         $values['environments'] = $project->getEnvironments();
 
-        if (in_array($values['type'], [
+        if (\in_array($values['type'], [
             Project::TYPE_GITHUB,
-            Project::TYPE_GITLAB
+            Project::TYPE_GITLAB,
         ], true)) {
             $accessInfo = $project->getAccessInformation();
             if (isset($accessInfo['origin']) && $accessInfo['origin']) {
                 $values['reference'] = $accessInfo['origin'];
             } elseif (isset($accessInfo['domain']) && $accessInfo['domain']) {
                 $reference = $accessInfo['user'] .
-                    '@' . $accessInfo['domain'] . ':' . ltrim($project->getReference(), '/') . '.git';
+                    '@' . $accessInfo['domain'] . ':' . \ltrim($project->getReference(), '/') . '.git';
                 if (isset($accessInfo['port']) && $accessInfo['port']) {
                     $reference = $accessInfo['user'] . '@' . $accessInfo['domain'] . ':' . $accessInfo['port'] . '/' .
-                        ltrim($project->getReference(), '/') . '.git';
+                        \ltrim($project->getReference(), '/') . '.git';
                 }
 
                 $values['reference'] = $reference;
@@ -544,7 +548,7 @@ class ProjectController extends WebController
             Project::TYPE_SVN              => 'Svn (Subversion)',
         ];
 
-        $sourcesPattern = sprintf('^(%s)', implode('|', Project::$allowedTypes));
+        $sourcesPattern = \sprintf('^(%s)', \implode('|', Project::$allowedTypes));
 
         $field = Form\Element\Select::create('type', Lang::get('where_hosted'), true);
         $field->setPattern($sourcesPattern);
@@ -651,7 +655,9 @@ class ProjectController extends WebController
 
     /**
      * Get the validator to use to check project references.
+     *
      * @param $values
+     *
      * @return callable
      */
     protected function getReferenceValidator($values)
@@ -663,37 +669,37 @@ class ProjectController extends WebController
             $validators = [
                 Project::TYPE_HG => [
                     'regex'   => '/^(ssh|https?):\/\//',
-                    'message' => Lang::get('error_hg')
+                    'message' => Lang::get('error_hg'),
                 ],
                 Project::TYPE_GIT => [
                     'regex'   => $gitRegex,
-                    'message' => Lang::get('error_git')
+                    'message' => Lang::get('error_git'),
                 ],
                 Project::TYPE_GITLAB => [
                     'regex'   => $gitRegex,
-                    'message' => Lang::get('error_gitlab')
+                    'message' => Lang::get('error_gitlab'),
                 ],
                 Project::TYPE_GITHUB => [
                     'regex'   => $gitRegex,
-                    'message' => Lang::get('error_github')
+                    'message' => Lang::get('error_github'),
                 ],
                 Project::TYPE_BITBUCKET => [
                     'regex'   => $gitRegex,
-                    'message' => Lang::get('error_bitbucket')
+                    'message' => Lang::get('error_bitbucket'),
                 ],
                 Project::TYPE_BITBUCKET_SERVER => [
                     'regex'   => $gitRegex,
-                    'message' => Lang::get('error_bitbucket')
+                    'message' => Lang::get('error_bitbucket'),
                 ],
                 Project::TYPE_BITBUCKET_HG => [
                     'regex'   => '/^[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-\.]+$/',
-                    'message' => Lang::get('error_bitbucket')
+                    'message' => Lang::get('error_bitbucket'),
                 ],
             ];
 
-            if (in_array($type, $validators) && !preg_match($validators[$type]['regex'], $val)) {
+            if (\in_array($type, $validators) && !\preg_match($validators[$type]['regex'], $val)) {
                 throw new Exception($validators[$type]['message']);
-            } elseif (Project::TYPE_LOCAL === $type && !is_dir($val)) {
+            } elseif (Project::TYPE_LOCAL === $type && !\is_dir($val)) {
                 throw new Exception(Lang::get('error_path'));
             }
 

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Model\Build;
 use PHPCensor\Model\BuildError;
@@ -33,7 +34,7 @@ class PhpStan extends Plugin
 
         $this->executable = $this->findBinary(['phpstan', 'phpstan.phar']);
 
-        if (isset($options['allowed_errors']) && is_int($options['allowed_errors'])) {
+        if (isset($options['allowed_errors']) && \is_int($options['allowed_errors'])) {
             $this->allowedErrors = $options['allowed_errors'];
         }
     }
@@ -68,19 +69,19 @@ class PhpStan extends Plugin
 
             foreach ($files as $file => $payload) {
                 if (0 < $payload['errors']) {
-                    $file = str_replace($this->build->getBuildPath(), '', $file);
-                    $len = strlen($file);
+                    $file = \str_replace($this->build->getBuildPath(), '', $file);
+                    $len = \strlen($file);
                     $out = '';
-                    $filename = (false !== strpos($file, ' (')) ? strstr($file, ' (', true) : $file;
+                    $filename = (false !== \strpos($file, ' (')) ? \strstr($file, ' (', true) : $file;
 
                     foreach ($payload['messages'] as $message) {
-                        if (strlen($message['message']) > $len) {
-                            $len = strlen($message['message']);
+                        if (\strlen($message['message']) > $len) {
+                            $len = \strlen($message['message']);
                         }
-                        $out .= vsprintf(' %d%s %s' . PHP_EOL, [
+                        $out .= \vsprintf(' %d%s %s' . PHP_EOL, [
                             $message['line'],
-                            str_repeat(' ', 6 - strlen($message['line'])),
-                            $message['message']
+                            \str_repeat(' ', 6 - \strlen($message['line'])),
+                            $message['message'],
                         ]);
 
                         $this->build->reportError(
@@ -92,12 +93,12 @@ class PhpStan extends Plugin
                             $message['line']
                         );
                     }
-                    $separator = str_repeat('-', 6) . ' ' . str_repeat('-', $len + 2) . PHP_EOL;
+                    $separator = \str_repeat('-', 6) . ' ' . \str_repeat('-', $len + 2) . PHP_EOL;
 
-                    $this->builder->logFailure(vsprintf('%s Line   %s' . PHP_EOL . '%s', [
+                    $this->builder->logFailure(\vsprintf('%s Line   %s' . PHP_EOL . '%s', [
                         $separator,
                         $file,
-                        $separator . $out . $separator
+                        $separator . $out . $separator,
                     ]));
                 }
             }
@@ -106,7 +107,7 @@ class PhpStan extends Plugin
         if ($success) {
             $this->builder->logSuccess('[OK] No errors');
         } else {
-            $this->builder->log(sprintf('[ERROR] Found %d errors', $total_errors));
+            $this->builder->log(\sprintf('[ERROR] Found %d errors', $total_errors));
         }
 
         return $success;
@@ -133,16 +134,17 @@ class PhpStan extends Plugin
 
     /**
      * @param string $output
+     *
      * @return array
      */
     protected function processReport($output)
     {
-        $data = json_decode(trim($output), true);
+        $data = \json_decode(\trim($output), true);
 
         $totalErrors = 0;
         $files        = [];
 
-        if (!empty($data) && is_array($data) && (0 < $data['totals']['file_errors'])) {
+        if (!empty($data) && \is_array($data) && (0 < $data['totals']['file_errors'])) {
             $totalErrors = $data['totals']['file_errors'];
             $files = $data['files'];
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -15,18 +17,21 @@ class Phar extends Plugin
 {
     /**
      * Phar Filename
+     *
      * @var string
      */
     protected $filename;
 
     /**
      * Regular Expression Filename Capture
+     *
      * @var string
      */
     protected $regexp;
 
     /**
      * Stub Filename
+     *
      * @var string
      */
     protected $stub;
@@ -66,6 +71,7 @@ class Phar extends Plugin
      * Filename Setter
      *
      * @param  string $filename Configuration Value
+     *
      * @return Phar   Fluent Interface
      */
     public function setFilename($filename)
@@ -91,6 +97,7 @@ class Phar extends Plugin
      * Regular Expression Setter
      *
      * @param  string $regexp Configuration Value
+     *
      * @return Phar   Fluent Interface
      */
     public function setRegExp($regexp)
@@ -116,6 +123,7 @@ class Phar extends Plugin
      * Stub Filename Setter
      *
      * @param  string $stub Configuration Value
+     *
      * @return Phar   Fluent Interface
      */
     public function setStub($stub)
@@ -136,6 +144,7 @@ class Phar extends Plugin
 
     /**
      * Get stub content for the Phar file.
+     *
      * @return string
      */
     public function getStubContent()
@@ -143,13 +152,14 @@ class Phar extends Plugin
         $content  = '';
         $filename = $this->getStub();
         if ($filename) {
-            $content = file_get_contents($this->builder->buildPath . $this->getStub());
+            $content = \file_get_contents($this->builder->buildPath . $this->getStub());
         }
         return $content;
     }
 
     /**
      * Run the phar plugin.
+     *
      * @return bool
      */
     public function execute()

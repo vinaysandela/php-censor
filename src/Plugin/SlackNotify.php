@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -39,8 +41,8 @@ class SlackNotify extends Plugin
     {
         parent::__construct($builder, $build, $options);
 
-        if (is_array($options) && isset($options['webhook_url'])) {
-            $this->webHook = trim($options['webhook_url']);
+        if (\is_array($options) && isset($options['webhook_url'])) {
+            $this->webHook = \trim($options['webhook_url']);
 
             if (isset($options['message'])) {
                 $this->message = $options['message'];
@@ -78,6 +80,7 @@ class SlackNotify extends Plugin
 
     /**
      * Run the Slack plugin.
+     *
      * @return bool
      */
     public function execute()
@@ -121,9 +124,9 @@ class SlackNotify extends Plugin
                     new AttachmentField([
                         'title' => 'Status',
                         'value' => $status,
-                        'short' => false
-                    ])
-                ]
+                        'short' => false,
+                    ]),
+                ],
             ]);
 
             $message->attach($attachment);

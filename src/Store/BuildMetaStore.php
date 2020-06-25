@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Store;
 
 use PDO;
@@ -50,7 +52,7 @@ class BuildMetaStore extends Store
      */
     public function getById($id, $useConnection = 'read')
     {
-        if (is_null($id)) {
+        if (\is_null($id)) {
             throw new HttpException('id passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -77,7 +79,7 @@ class BuildMetaStore extends Store
      */
     public function getByKey($buildId, $key)
     {
-        if (is_null($buildId)) {
+        if (\is_null($buildId)) {
             throw new HttpException('buildId passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -112,7 +114,7 @@ class BuildMetaStore extends Store
      */
     public function getByBuildId($buildId, $limit = 1000, $useConnection = 'read')
     {
-        if (is_null($buildId)) {
+        if (\is_null($buildId)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -127,14 +129,13 @@ class BuildMetaStore extends Store
             $map = function ($item) {
                 return new BuildMeta($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
-            $count = count($rtn);
+            $count = \count($rtn);
 
             return ['items' => $rtn, 'count' => $count];
-        } else {
-            return ['items' => [], 'count' => 0];
         }
+        return ['items' => [], 'count' => 0];
     }
 
     /**
@@ -160,11 +161,10 @@ class BuildMetaStore extends Store
             $map = function ($item) {
                 return new BuildMeta($item);
             };
-            $rtn = array_map($map, $res);
+            $rtn = \array_map($map, $res);
 
             return $rtn;
-        } else {
-            return [];
         }
+        return [];
     }
 }

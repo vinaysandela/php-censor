@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Service;
 
 use DateInterval;
@@ -84,7 +86,7 @@ class BuildService
         $build->setStatusPending();
         $build->setEnvironmentid($environmentId);
 
-        if (!is_null($extra)) {
+        if (!\is_null($extra)) {
             $build->setExtra($extra);
         }
 
@@ -138,14 +140,14 @@ class BuildService
     public function createPeriodicalBuilds(Logger $logger)
     {
         $periodicalConfig = null;
-        if (file_exists(APP_DIR . 'periodical.yml')) {
+        if (\file_exists(APP_DIR . 'periodical.yml')) {
             try {
                 $periodicalConfig = (new Yaml())->parse(
-                    file_get_contents(APP_DIR . 'periodical.yml')
+                    \file_get_contents(APP_DIR . 'periodical.yml')
                 );
             } catch (ParseException $e) {
                 $logger->error(
-                    sprintf(
+                    \sprintf(
                         'Invalid periodical builds config ("app/periodical.yml")! Exception: %s',
                         $e->getMessage()
                     ),
@@ -158,7 +160,7 @@ class BuildService
 
         if (empty($periodicalConfig) ||
             empty($periodicalConfig['projects']) ||
-            !is_array($periodicalConfig['projects'])) {
+            !\is_array($periodicalConfig['projects'])) {
             $logger->warning('Empty periodical builds config ("app/periodical.yml")!');
 
             return;
@@ -171,9 +173,9 @@ class BuildService
             if (!$project ||
                 empty($projectConfig['interval']) ||
                 empty($projectConfig['branches']) ||
-                !is_array($projectConfig['branches'])) {
+                !\is_array($projectConfig['branches'])) {
                 $logger->warning(
-                    sprintf(
+                    \sprintf(
                         'Invalid/empty section for project #%s ("app/periodical.yml")!',
                         $projectId
                     )
@@ -188,7 +190,7 @@ class BuildService
                 $interval = new DateInterval($projectConfig['interval']);
             } catch (Exception $e) {
                 $logger->error(
-                    sprintf(
+                    \sprintf(
                         'Invalid datetime interval for project #%s! Exception: %s',
                         $projectId,
                         $e->getMessage()
@@ -231,10 +233,10 @@ class BuildService
         }
 
         $logger->notice(
-            sprintf(
+            \sprintf(
                 'Created %d periodical builds for %d projects.',
                 $buildsCount,
-                count($periodicalConfig['projects'])
+                \count($periodicalConfig['projects'])
             )
         );
     }
@@ -315,9 +317,9 @@ class BuildService
             $fileSystem = new Filesystem();
 
             foreach ($projectPaths as $projectPath) {
-                if (is_link($projectPath)) {
+                if (\is_link($projectPath)) {
                     // Remove the symlink without using recursive.
-                    exec(sprintf('rm "%s"', $projectPath));
+                    \exec(\sprintf('rm "%s"', $projectPath));
                 } else {
                     $fileSystem->remove($projectPath);
                 }
@@ -342,6 +344,7 @@ class BuildService
 
     /**
      * Takes a build and puts it into the queue to be run (if using a queue)
+     *
      * @param Build $build
      * @param int   $buildPriority priority in queue relative to default
      */
@@ -380,7 +383,7 @@ class BuildService
 
                 $pheanstalk->useTube($settings['name']);
                 $pheanstalk->put(
-                    json_encode($jobData),
+                    \json_encode($jobData),
                     $queuePriority,
                     PheanstalkInterface::DEFAULT_DELAY,
                     $config->get('php-censor.queue.lifetime', 600)

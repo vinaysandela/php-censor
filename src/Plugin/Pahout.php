@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Model\Build;
 use PHPCensor\Model\BuildError;
@@ -27,7 +28,6 @@ class Pahout extends Plugin
     /**
      * @param Builder $builder
      * @param Build $build
-     *
      * @param array $options
      *
      * @throws Exception
@@ -38,13 +38,13 @@ class Pahout extends Plugin
 
         $this->executable = $this->findBinary(['pahout', 'pahout.phar']);
 
-        if (!empty($options['directory']) && is_string($options['directory'])) {
+        if (!empty($options['directory']) && \is_string($options['directory'])) {
             $this->directory = $options['directory'];
         } else {
             $this->directory = './src';
         }
 
-        if (isset($options['allowed_warnings']) && is_int($options['allowed_warnings'])) {
+        if (isset($options['allowed_warnings']) && \is_int($options['allowed_warnings'])) {
             $this->allowedWarnings = $options['allowed_warnings'];
         } else {
             $this->allowedWarnings = -1;
@@ -74,8 +74,8 @@ class Pahout extends Plugin
 
         list($files, $hints) = $this->processReport($this->builder->getLastOutput());
 
-        if (0 < count($hints)) {
-            if (-1 !== $this->allowedWarnings && count($hints) > $this->allowedWarnings) {
+        if (0 < \count($hints)) {
+            if (-1 !== $this->allowedWarnings && \count($hints) > $this->allowedWarnings) {
                 $success = false;
             }
 
@@ -97,7 +97,7 @@ class Pahout extends Plugin
             $this->builder->logSuccess('Awesome! There is nothing from me to teach you!');
         }
 
-        $this->builder->log(sprintf('%d files checked, %d hints detected.', count($files), count($hints)));
+        $this->builder->log(\sprintf('%d files checked, %d hints detected.', \count($files), \count($hints)));
 
         return $success;
     }
@@ -113,6 +113,7 @@ class Pahout extends Plugin
     /**
      * @param string $stage
      * @param Build $build
+     *
      * @return bool
      */
     public static function canExecuteOnStage($stage, Build $build)
@@ -122,30 +123,31 @@ class Pahout extends Plugin
 
     /**
      * @param string $output
+     *
      * @return array
      */
     protected function processReport($output)
     {
-        $data = json_decode(trim($output), true);
+        $data = \json_decode(\trim($output), true);
 
         $hints = [];
         $files = [];
 
-        if (!empty($data) && is_array($data) && isset($data['hints'])) {
+        if (!empty($data) && \is_array($data) && isset($data['hints'])) {
             $files = $data['files'];
 
             foreach ($data['hints'] as $hint) {
                 $hints[] = [
-                    'full_message' => vsprintf('%s:%d' . PHP_EOL . self::TAB . '%s: %s [%s]', [
+                    'full_message' => \vsprintf('%s:%d' . PHP_EOL . self::TAB . '%s: %s [%s]', [
                         $hint['filename'],
                         $hint['lineno'],
                         $hint['type'],
                         $hint['message'],
-                        $hint['link']
+                        $hint['link'],
                     ]),
                     'message'   => $hint['message'],
                     'file'      => $hint['filename'],
-                    'line_from' => $hint['lineno']
+                    'line_from' => $hint['lineno'],
                 ];
             }
         }

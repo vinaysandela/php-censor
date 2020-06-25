@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Model\Base;
 
 use PHPCensor\Model\Base\Environment;

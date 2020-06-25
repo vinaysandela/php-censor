@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use Exception;
@@ -64,7 +66,7 @@ class BitbucketServerBuild extends GitBuild
     /**
      * Send status updates to any relevant third parties (i.e. Bitbucket)
      *
-     * @return boolean
+     * @return bool
      */
     public function sendStatusPostback()
     {
@@ -92,7 +94,7 @@ class BitbucketServerBuild extends GitBuild
     {
         $reference = $this->getProject()->getReference();
 
-        if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
+        if (\in_array($this->getSource(), Build::$pullRequestSources, true)) {
             $reference = $this->getExtra('remote_reference');
         }
 
@@ -113,15 +115,15 @@ class BitbucketServerBuild extends GitBuild
         $skipGitFinalization = false;
 
         try {
-            if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
+            if (\in_array($this->getSource(), Build::$pullRequestSources, true)) {
                 $diff = $this->getPullRequestDiff($builder, $cloneTo, $extra['remote_branch']);
-                
+
                 $diffFile = $this->writeDiff($builder->buildPath, $diff);
 
                 $cmd = 'cd "%s" && git checkout -b php-censor/' . $this->getId();
 
                 $success = $builder->executeCommand($cmd, $cloneTo);
-                
+
                 if ($success) {
                     $applyCmd = 'git apply "%s"';
                     $success  = $builder->executeCommand($applyCmd, $diffFile);
@@ -140,7 +142,7 @@ class BitbucketServerBuild extends GitBuild
 
         return $success;
     }
-    
+
     /**
      * Create request patch with diff
      *
@@ -170,11 +172,11 @@ class BitbucketServerBuild extends GitBuild
      */
     protected function writeDiff($cloneTo, $diff)
     {
-        $filePath = dirname($cloneTo . '/temp');
+        $filePath = \dirname($cloneTo . '/temp');
         $diffFile = $filePath . '.patch';
 
-        file_put_contents($diffFile, $diff);
-        chmod($diffFile, 0600);
+        \file_put_contents($diffFile, $diff);
+        \chmod($diffFile, 0600);
 
         return $diffFile;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use Swift_Mailer;
@@ -18,11 +20,12 @@ class MailerFactory
 
     /**
      * Set the mailer factory configuration.
+     *
      * @param array $config
      */
     public function __construct($config = [])
     {
-        if (!is_array($config)) {
+        if (!\is_array($config)) {
             $config = [];
         }
 
@@ -31,6 +34,7 @@ class MailerFactory
 
     /**
      * Returns an instance of Swift_Mailer based on the config.s
+     *
      * @return Swift_Mailer
      */
     public function getSwiftMailerFromConfig()
@@ -40,7 +44,7 @@ class MailerFactory
 
             // Workaround issue where smtp_encryption could == 1 in the past by
             // checking it is a valid transport
-            if ($encryptionType && !in_array($encryptionType, stream_get_transports())) {
+            if ($encryptionType && !\in_array($encryptionType, \stream_get_transports())) {
                 $encryptionType = null;
             }
 
@@ -62,17 +66,19 @@ class MailerFactory
 
     /**
      * Return a specific configuration value by key.
+     *
      * @param $configName
+     *
      * @return null|string
      */
     public function getMailConfig($configName)
     {
         if (isset($this->emailConfig[$configName]) && $this->emailConfig[$configName] != "") {
             return $this->emailConfig[$configName];
-        } else {
-            // Check defaults
+        }
+        // Check defaults
 
-            switch ($configName) {
+        switch ($configName) {
                 case 'smtp_address':
                     return "";
                 case 'default_mailto_address':
@@ -84,6 +90,5 @@ class MailerFactory
                 default:
                     return "";
             }
-        }
     }
 }

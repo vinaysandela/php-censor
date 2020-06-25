@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -52,35 +54,35 @@ class PhpCpd extends Plugin implements ZeroConfigPluginInterface
     public function execute()
     {
         $ignore = '';
-        if (is_array($this->ignore)) {
+        if (\is_array($this->ignore)) {
             foreach ($this->ignore as $item) {
-                $item = rtrim($item, '/');
-                if (is_file($this->builder->buildPath . $item)) {
-                    $ignoredFile     = explode('/', $item);
-                    $filesToIgnore[] = array_pop($ignoredFile);
+                $item = \rtrim($item, '/');
+                if (\is_file($this->builder->buildPath . $item)) {
+                    $ignoredFile     = \explode('/', $item);
+                    $filesToIgnore[] = \array_pop($ignoredFile);
                 } else {
-                    $ignore .= sprintf(' --exclude="%s"', $item);
+                    $ignore .= \sprintf(' --exclude="%s"', $item);
                 }
             }
         }
 
         if (isset($filesToIgnore)) {
-            $filesToIgnore = sprintf(' --names-exclude="%s"', implode(',', $filesToIgnore));
+            $filesToIgnore = \sprintf(' --names-exclude="%s"', \implode(',', $filesToIgnore));
             $ignore        = $ignore . $filesToIgnore;
         }
 
         $phpcpd = $this->executable;
 
-        $tmpFileName = tempnam(sys_get_temp_dir(), (self::pluginName() . '_'));
+        $tmpFileName = \tempnam(\sys_get_temp_dir(), (self::pluginName() . '_'));
 
         $cmd     = 'cd "%s" && ' . $phpcpd . ' --log-pmd "%s" %s "%s"';
         $success = $this->builder->executeCommand($cmd, $this->builder->buildPath, $tmpFileName, $ignore, $this->directory);
 
-        $errorCount = $this->processReport(file_get_contents($tmpFileName));
+        $errorCount = $this->processReport(\file_get_contents($tmpFileName));
 
         $this->build->storeMeta((self::pluginName() . '-warnings'), $errorCount);
 
-        unlink($tmpFileName);
+        \unlink($tmpFileName);
 
         return $success;
     }
@@ -96,7 +98,7 @@ class PhpCpd extends Plugin implements ZeroConfigPluginInterface
      */
     protected function processReport($xmlString)
     {
-        $xml = simplexml_load_string($xmlString);
+        $xml = \simplexml_load_string($xmlString);
 
         if (false === $xml) {
             $this->builder->log($xmlString);
@@ -107,7 +109,7 @@ class PhpCpd extends Plugin implements ZeroConfigPluginInterface
         foreach ($xml->duplication as $duplication) {
             foreach ($duplication->file as $file) {
                 $fileName = (string)$file['path'];
-                $fileName = str_replace($this->builder->buildPath, '', $fileName);
+                $fileName = \str_replace($this->builder->buildPath, '', $fileName);
 
                 $message = <<<CPD
 Copy and paste detected:

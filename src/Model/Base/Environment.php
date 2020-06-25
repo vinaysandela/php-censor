@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PHPCensor\Model\Base;
 
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class Environment extends Model
@@ -96,10 +95,10 @@ class Environment extends Model
      */
     public function getBranches()
     {
-        return array_filter(
-            array_map(
+        return \array_filter(
+            \array_map(
                 'trim',
-                explode("\n", $this->data['branches'])
+                \explode("\n", $this->data['branches'])
             )
         );
     }
@@ -111,7 +110,7 @@ class Environment extends Model
      */
     public function setBranches(array $value)
     {
-        $branches = implode("\n", $value);
+        $branches = \implode("\n", $value);
         if ($this->data['branches'] === $branches) {
             return false;
         }

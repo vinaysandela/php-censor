@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use PHPCensor\Model\User;
@@ -45,7 +47,7 @@ class View
      */
     protected static function getViewFile($file, $path = null)
     {
-        $viewPath = is_null($path) ? (SRC_DIR . 'View/') : $path;
+        $viewPath = \is_null($path) ? (SRC_DIR . 'View/') : $path;
         $fullPath = $viewPath . $file . '.' . static::$extension;
 
         return $fullPath;
@@ -59,7 +61,7 @@ class View
      */
     public static function exists($file, $path = null)
     {
-        if (!file_exists(self::getViewFile($file, $path))) {
+        if (!\file_exists(self::getViewFile($file, $path))) {
             return false;
         }
 
@@ -100,14 +102,14 @@ class View
      */
     public function render()
     {
-        extract($this->data);
+        \extract($this->data);
 
-        ob_start();
+        \ob_start();
 
         require($this->viewFile);
 
-        $html = ob_get_contents();
-        ob_end_clean();
+        $html = \ob_get_contents();
+        \ob_end_clean();
 
         return $html;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use Exception;
@@ -9,12 +11,12 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PHPCensor\Exception\HttpException;
 use PHPCensor\Exception\HttpException\NotFoundException;
-use Symfony\Component\HttpFoundation\Request;
 use PHPCensor\Http\Response;
 use PHPCensor\Http\Response\RedirectResponse;
 use PHPCensor\Http\Router;
 use PHPCensor\Logging\Handler;
 use PHPCensor\Store\Factory;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Dan Cryer <dan@block8.co.uk>
@@ -53,7 +55,6 @@ class Application
 
     /**
      * @param Config $applicationConfig
-     *
      * @param Request|null $request
      */
     public function __construct(Config $applicationConfig, Request $request = null)
@@ -118,9 +119,9 @@ class Application
 
         // Handler for the route we're about to register, checks for a valid session where necessary:
         $routeHandler = function ($route, Response &$response) use ($isAjaxRequest, $validateSession, $skipAuth) {
-            $skipValidation = in_array($route['controller'], ['session', 'webhook', 'build-status']);
+            $skipValidation = \in_array($route['controller'], ['session', 'webhook', 'build-status']);
 
-            if (!$skipValidation && !$validateSession() && (!is_callable($skipAuth) || !$skipAuth())) {
+            if (!$skipValidation && !$validateSession() && (!\is_callable($skipAuth) || !$skipAuth())) {
                 if ($isAjaxRequest) {
                     $response->setResponseCode(401);
                     $response->setContent('');
@@ -161,7 +162,7 @@ class Application
             throw new NotFoundException('Controller ' . $this->toPhpName($this->route['controller']) . ' does not exist!');
         }
 
-        $action = lcfirst($this->toPhpName($this->route['action']));
+        $action = \lcfirst($this->toPhpName($this->route['action']));
         if (!$this->getController()->hasAction($action)) {
             throw new NotFoundException('Controller ' . $this->toPhpName($this->route['controller']) . ' does not have action ' . $action . '!');
         }
@@ -262,7 +263,7 @@ class Application
      */
     protected function controllerExists($route)
     {
-        return class_exists($this->getControllerClass($route));
+        return \class_exists($this->getControllerClass($route));
     }
 
     /**
@@ -299,9 +300,9 @@ class Application
      */
     protected function toPhpName($string)
     {
-        $string = str_replace('-', ' ', $string);
-        $string = ucwords($string);
-        $string = str_replace(' ', '', $string);
+        $string = \str_replace('-', ' ', $string);
+        $string = \ucwords($string);
+        $string = \str_replace(' ', '', $string);
 
         return $string;
     }

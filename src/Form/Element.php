@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Form;
 
 use PHPCensor\View;
@@ -41,7 +43,7 @@ abstract class Element
      */
     public function __construct($name = null)
     {
-        if (!is_null($name)) {
+        if (!\is_null($name)) {
             $this->setName($name);
         }
     }
@@ -61,7 +63,7 @@ abstract class Element
      */
     public function setName($name)
     {
-        $this->name = strtolower(preg_replace('/([^a-zA-Z0-9_\-%])/', '', $name));
+        $this->name = \strtolower(\preg_replace('/([^a-zA-Z0-9_\-%])/', '', $name));
 
         return $this;
     }
@@ -167,9 +169,9 @@ abstract class Element
      */
     public function render($viewFile = null)
     {
-        if (is_null($viewFile)) {
-            $class    = explode('\\', get_called_class());
-            $viewFile = end($class);
+        if (\is_null($viewFile)) {
+            $class    = \explode('\\', \get_called_class());
+            $viewFile = \end($class);
         }
 
         $view = new View('Form/' . $viewFile);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin\Util;
 
 use Closure;
@@ -44,15 +46,16 @@ class Factory
      * This enables the config file to call any public methods.
      *
      * @param $configPath
+     *
      * @return bool - true if the function exists else false.
      */
     public function addConfigFromFile($configPath)
     {
         // The file is expected to return a function which can
         // act on the pluginFactory to register any resources needed.
-        if (file_exists($configPath)) {
+        if (\file_exists($configPath)) {
             $configFunction = require($configPath);
-            if (is_callable($configFunction)) {
+            if (\is_callable($configFunction)) {
                 $configFunction($this);
                 return true;
             }
@@ -62,6 +65,7 @@ class Factory
 
     /**
      * Get most recently used factory options.
+     *
      * @return mixed
      */
     public function getLastOptions()
@@ -138,8 +142,10 @@ class Factory
 
     /**
      * Get an internal resource ID.
+     *
      * @param null $type
      * @param null $name
+     *
      * @return string
      */
     private function getInternalID($type = null, $name = null)
@@ -152,6 +158,7 @@ class Factory
     /**
      * @param string $type
      * @param string $name
+     *
      * @return mixed
      */
     public function getResourceFor($type = null, $name = null)
@@ -176,6 +183,7 @@ class Factory
 
     /**
      * @param ReflectionParameter $param
+     *
      * @return null|string
      */
     private function getParamType(ReflectionParameter $param)
@@ -185,17 +193,18 @@ class Factory
             return $class->getName();
         } elseif ($param->isArray()) {
             return self::TYPE_ARRAY;
-        } elseif (is_callable($param)) {
+        } elseif (\is_callable($param)) {
             return self::TYPE_CALLABLE;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
      * @param $existingArgs
      * @param ReflectionParameter $param
+     *
      * @return array
+     *
      * @throws DomainException
      */
     private function addArgFromParam($existingArgs, ReflectionParameter $param)

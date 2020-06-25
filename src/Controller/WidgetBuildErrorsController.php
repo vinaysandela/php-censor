@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use PHPCensor\Exception\HttpException;
@@ -77,7 +79,7 @@ class WidgetBuildErrorsController extends WebController
 
         if (!empty($builds['projects'])) {
             $view->builds = $builds['projects'];
-            $projects     = $this->projectStore->getByIds(array_keys($builds['projects']));
+            $projects     = $this->projectStore->getByIds(\array_keys($builds['projects']));
 
             $viewProjects = [];
             foreach ($projects as $id => $project) {

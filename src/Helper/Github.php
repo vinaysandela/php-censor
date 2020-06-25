@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Helper;
 
 use GuzzleHttp\Client;
@@ -12,12 +14,14 @@ class Github
 {
     /**
      * Create a comment on a specific file (and commit) in a Github Pull Request.
+     *
      * @param $repo
      * @param $pullId
      * @param $commitId
      * @param $file
      * @param $line
      * @param $comment
+     *
      * @return null
      */
     public function createPullRequestComment($repo, $pullId, $commitId, $file, $line, $comment)
@@ -28,7 +32,7 @@ class Github
             return null;
         }
 
-        $url = '/repos/' . strtolower($repo) . '/pulls/' . $pullId . '/comments';
+        $url = '/repos/' . \strtolower($repo) . '/pulls/' . $pullId . '/comments';
 
         $params = [
             'body'      => $comment,
@@ -40,8 +44,8 @@ class Github
         $client = new Client();
         $client->post(('https://api.github.com' . $url), [
             'headers' => [
-                'Authorization' => 'Basic ' . base64_encode($token . ':x-oauth-basic'),
-                'Content-Type'  => 'application/x-www-form-urlencoded'
+                'Authorization' => 'Basic ' . \base64_encode($token . ':x-oauth-basic'),
+                'Content-Type'  => 'application/x-www-form-urlencoded',
             ],
             'json' => $params,
         ]);
@@ -49,11 +53,13 @@ class Github
 
     /**
      * Create a comment on a Github commit.
+     *
      * @param $repo
      * @param $commitId
      * @param $file
      * @param $line
      * @param $comment
+     *
      * @return null
      */
     public function createCommitComment($repo, $commitId, $file, $line, $comment)
@@ -64,7 +70,7 @@ class Github
             return null;
         }
 
-        $url = '/repos/' . strtolower($repo) . '/commits/' . $commitId . '/comments';
+        $url = '/repos/' . \strtolower($repo) . '/commits/' . $commitId . '/comments';
 
         $params = [
             'body'     => $comment,
@@ -75,8 +81,8 @@ class Github
         $client = new Client();
         $client->post(('https://api.github.com' . $url), [
             'headers' => [
-                'Authorization' => 'Basic ' . base64_encode($token . ':x-oauth-basic'),
-                'Content-Type'  => 'application/x-www-form-urlencoded'
+                'Authorization' => 'Basic ' . \base64_encode($token . ':x-oauth-basic'),
+                'Content-Type'  => 'application/x-www-form-urlencoded',
             ],
             'json' => $params,
         ]);

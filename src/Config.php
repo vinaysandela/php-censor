@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use Symfony\Component\Yaml\Parser as YamlParser;
@@ -33,10 +35,10 @@ class Config
 
         if (empty($settings)) {
             return;
-        } elseif (is_array($settings)) {
+        } elseif (\is_array($settings)) {
             // Array of setting data.
             $this->setArray($settings);
-        } elseif (is_string($settings) && file_exists($settings)) {
+        } elseif (\is_string($settings) && \file_exists($settings)) {
             $this->loadYaml($settings);
         }
     }
@@ -48,7 +50,7 @@ class Config
     {
         // Path to a YAML file.
         $parser = new YamlParser();
-        $yaml   = file_get_contents($yamlFile);
+        $yaml   = \file_get_contents($yamlFile);
         $config = (array)$parser->parse($yaml);
 
         if (empty($config)) {
@@ -68,23 +70,22 @@ class Config
      */
     public function get($key, $default = null)
     {
-        $keyParts = explode('.', $key);
+        $keyParts = \explode('.', $key);
         $selected = $this->config;
 
         $i        = -1;
-        $lastPart = count($keyParts) - 1;
-        while ($part = array_shift($keyParts)) {
+        $lastPart = \count($keyParts) - 1;
+        while ($part = \array_shift($keyParts)) {
             $i++;
 
-            if (!array_key_exists($part, $selected)) {
+            if (!\array_key_exists($part, $selected)) {
                 return $default;
             }
 
             if ($i === $lastPart) {
                 return $selected[$part];
-            } else {
-                $selected = $selected[$part];
             }
+            $selected = $selected[$part];
         }
 
         return $default;
@@ -117,6 +118,7 @@ class Config
 
     /**
      * Short-hand syntax for get()
+     *
      * @see Config::get()
      *
      * @param string $key
@@ -130,6 +132,7 @@ class Config
 
     /**
      * Short-hand syntax for set()
+     *
      * @see Config::set()
      *
      * @param string $key
@@ -172,20 +175,20 @@ class Config
      */
     public static function deepMerge(&$source, $target)
     {
-        if (count($source) === 0) {
+        if (\count($source) === 0) {
             $source = $target;
             return;
         }
 
         foreach ($target as $targetKey => $targetValue) {
             if (isset($source[$targetKey])) {
-                if (!is_array($source[$targetKey]) && !is_array($targetValue)) {
+                if (!\is_array($source[$targetKey]) && !\is_array($targetValue)) {
                     // Neither value is an array, overwrite
                     $source[$targetKey] = $targetValue;
-                } elseif (is_array($source[$targetKey]) && is_array($targetValue)) {
+                } elseif (\is_array($source[$targetKey]) && \is_array($targetValue)) {
                     // Both are arrays, deep merge them
                     self::deepMerge($source[$targetKey], $targetValue);
-                } elseif (is_array($source[$targetKey])) {
+                } elseif (\is_array($source[$targetKey])) {
                     // Source is the array, push target value
                     $source[$targetKey][] = $targetValue;
                 } else {

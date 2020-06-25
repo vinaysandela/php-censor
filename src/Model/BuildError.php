@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model;
 
 use PHPCensor\Model\Base\BuildError as BaseBuildError;
@@ -82,7 +84,7 @@ class BuildError extends BaseBuildError
      */
     public static function generateHash($plugin, $file, $lineStart, $lineEnd, $severity, $message)
     {
-        return md5($plugin . $file . $lineStart . $lineEnd . $severity . $message);
+        return \md5($plugin . $file . $lineStart . $lineEnd . $severity . $message);
     }
 
     /**

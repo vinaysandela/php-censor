@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use DirectoryIterator;
-use PHPCensor;
 use PHPCensor\Builder;
 use PHPCensor\Model\Build;
 use PHPCensor\Plugin;
@@ -37,20 +38,20 @@ class Lint extends Plugin
             $this->directory,
         ];
 
-        if (!empty($options['directories']) && is_array($options['directories'])) {
+        if (!empty($options['directories']) && \is_array($options['directories'])) {
             foreach ($options['directories'] as $index => $directory) {
-                $relativePath = preg_replace(
+                $relativePath = \preg_replace(
                     '#^(\./|/)?(.*)$#',
                     '$2',
                     $options['directories'][$index]
                 );
-                $relativePath = rtrim($relativePath, "\//");
+                $relativePath = \rtrim($relativePath, "\//");
 
                 $this->directories[] = $this->builder->buildPath . $relativePath . '/';
             }
         }
 
-        if (array_key_exists('recursive', $options)) {
+        if (\array_key_exists('recursive', $options)) {
             $this->recursive = $options['recursive'];
         }
     }
@@ -75,9 +76,11 @@ class Lint extends Plugin
 
     /**
      * Lint an item (file or directory) by calling the appropriate method.
+     *
      * @param $php
      * @param $item
      * @param $itemPath
+     *
      * @return bool
      */
     protected function lintItem($php, $item, $itemPath)
@@ -97,8 +100,10 @@ class Lint extends Plugin
 
     /**
      * Run php -l against a directory of files.
+     *
      * @param $php
      * @param $path
+     *
      * @return bool
      */
     protected function lintDirectory($php, $path)
@@ -113,7 +118,7 @@ class Lint extends Plugin
 
             $itemPath = $path . $item->getFilename();
 
-            if (in_array($itemPath, $this->ignore)) {
+            if (\in_array($itemPath, $this->ignore)) {
                 continue;
             }
 
@@ -127,8 +132,10 @@ class Lint extends Plugin
 
     /**
      * Run php -l against a specific file.
+     *
      * @param $php
      * @param $path
+     *
      * @return bool
      */
     protected function lintFile($php, $path)

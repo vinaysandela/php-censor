@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\ProcessControl;
 
 use PHPCensor\ProcessControl\ProcessControlInterface;
@@ -34,13 +36,13 @@ abstract class ProcessControlTest extends TestCase
         $desc = [["pipe", "r"], ["pipe", "w"], ["pipe", "w"]];
         $this->pipes = [];
 
-        $this->process = proc_open($this->getTestCommand(), $desc, $this->pipes);
-        sleep(1);
+        $this->process = \proc_open($this->getTestCommand(), $desc, $this->pipes);
+        \sleep(1);
 
-        self::assertTrue(is_resource($this->process));
+        self::assertTrue(\is_resource($this->process));
         self::assertTrue($this->isRunning());
 
-        $status = proc_get_status($this->process);
+        $status = \proc_get_status($this->process);
         return (int)$status['pid'];
     }
 
@@ -50,11 +52,11 @@ abstract class ProcessControlTest extends TestCase
      */
     protected function endProcess()
     {
-        if (!is_resource($this->process)) {
+        if (!\is_resource($this->process)) {
             return;
         }
-        array_map('fclose', $this->pipes);
-        $exitCode = proc_close($this->process);
+        \array_map('fclose', $this->pipes);
+        $exitCode = \proc_close($this->process);
         self::assertFalse($this->isRunning());
         $this->process = null;
         return $exitCode;
@@ -65,10 +67,10 @@ abstract class ProcessControlTest extends TestCase
      */
     protected function isRunning()
     {
-        if (!is_resource($this->process)) {
+        if (!\is_resource($this->process)) {
             return false;
         }
-        $status = proc_get_status($this->process);
+        $status = \proc_get_status($this->process);
         return (bool)$status['running'];
     }
 
@@ -82,7 +84,7 @@ abstract class ProcessControlTest extends TestCase
 
         self::assertTrue($this->object->isRunning($pid));
 
-        fwrite($this->pipes[0], PHP_EOL);
+        \fwrite($this->pipes[0], PHP_EOL);
 
         $exitCode = $this->endProcess();
 
@@ -99,7 +101,7 @@ abstract class ProcessControlTest extends TestCase
         $pid = $this->startProcess();
 
         self::assertTrue($this->object->kill($pid));
-        sleep(1);
+        \sleep(1);
 
         self::assertFalse($this->isRunning());
     }
@@ -113,7 +115,7 @@ abstract class ProcessControlTest extends TestCase
         $pid = $this->startProcess();
 
         $this->object->kill($pid, true);
-        sleep(1);
+        \sleep(1);
 
         self::assertFalse($this->isRunning());
     }

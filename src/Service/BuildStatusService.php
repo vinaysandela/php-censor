@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Service;
 
 use Exception;
@@ -62,7 +64,7 @@ class BuildStatusService
         if ($this->build) {
             $this->loadParentBuild($isParent);
         }
-        if (defined('APP_URL')) {
+        if (\defined('APP_URL')) {
             $this->setUrl(APP_URL);
         }
     }
@@ -109,7 +111,7 @@ class BuildStatusService
      */
     public function getActivity()
     {
-        if (in_array($this->build->getStatus(), $this->finishedStatusIds)) {
+        if (\in_array($this->build->getStatus(), $this->finishedStatusIds)) {
             return 'Sleeping';
         } elseif ($this->build->getStatus() == Build::STATUS_PENDING) {
             return 'Pending';
@@ -132,7 +134,7 @@ class BuildStatusService
      */
     public function isFinished()
     {
-        if (in_array($this->build->getStatus(), $this->finishedStatusIds)) {
+        if (\in_array($this->build->getStatus(), $this->finishedStatusIds)) {
             return true;
         }
         return false;

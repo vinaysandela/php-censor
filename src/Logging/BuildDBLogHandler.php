@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Logging;
 
 use Monolog\Handler\AbstractProcessingHandler;
@@ -60,23 +62,24 @@ class BuildDBLogHandler extends AbstractProcessingHandler
     {
         $this->build->setLog($this->logValue);
         Factory::getStore('Build')->save($this->build);
-        $this->flushTimestamp = time();
+        $this->flushTimestamp = \time();
     }
 
     /**
      * Write a log entry to the build log.
+     *
      * @param array $record
      */
     protected function write(array $record)
     {
         $message = (string)$record['message'];
-        $message = str_replace(['\/', '//'], '/', $message);
-        $message = str_replace($this->build->getBuildPath(), '<BUILD_PATH>/', $message);
-        $message = str_replace(ROOT_DIR, '<PHP_CENSOR_PATH>/', $message);
+        $message = \str_replace(['\/', '//'], '/', $message);
+        $message = \str_replace($this->build->getBuildPath(), '<BUILD_PATH>/', $message);
+        $message = \str_replace(ROOT_DIR, '<PHP_CENSOR_PATH>/', $message);
 
         $this->logValue .= $message . PHP_EOL;
 
-        if ($this->flushTimestamp < (time() - $this->flushDelay)) {
+        if ($this->flushTimestamp < (\time() - $this->flushDelay)) {
             $this->flushData();
         }
     }

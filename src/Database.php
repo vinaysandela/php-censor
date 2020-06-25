@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor;
 
 use Exception;
@@ -27,7 +29,7 @@ class Database extends PDO
      */
     protected static $servers = [
         'read'  => [],
-        'write' => []
+        'write' => [],
     ];
 
     /**
@@ -35,7 +37,7 @@ class Database extends PDO
      */
     protected static $connections = [
         'read'  => null,
-        'write' => null
+        'write' => null,
     ];
 
     /**
@@ -43,7 +45,7 @@ class Database extends PDO
      */
     protected static $dsn = [
         'read'  => '',
-        'write' => ''
+        'write' => '',
     ];
 
     protected static $details = [];
@@ -91,22 +93,22 @@ class Database extends PDO
             self::init();
         }
 
-        if (is_null(self::$connections[$type])) {
+        if (\is_null(self::$connections[$type])) {
             // Shuffle, so we pick a random server:
             $servers = self::$servers[$type];
-            shuffle($servers);
+            \shuffle($servers);
 
             $connection = null;
 
             // Loop until we get a working connection:
-            while (count($servers)) {
+            while (\count($servers)) {
                 // Pull the next server:
-                $server = array_shift($servers);
+                $server = \array_shift($servers);
 
                 self::$dsn[$type] = self::$details['driver'] . ':host=' . $server['host'];
 
                 if (self::$details['driver'] === 'pgsql') {
-                    if (!array_key_exists('pgsql-sslmode', $server)) {
+                    if (!\array_key_exists('pgsql-sslmode', $server)) {
                         $server['pgsql-sslmode'] = 'prefer';
                     }
 
@@ -203,7 +205,7 @@ class Database extends PDO
             $quote = '"';
         }
 
-        return preg_replace('/{{(.*?)}}/', ($quote . '\1' . $quote), $statement);
+        return \preg_replace('/{{(.*?)}}/', ($quote . '\1' . $quote), $statement);
     }
 
     /**

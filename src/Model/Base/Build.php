@@ -196,9 +196,9 @@ class Build extends Model
      */
     public function setStatus(int $value)
     {
-        if (!in_array($value, $this->allowedStatuses, true)) {
+        if (!\in_array($value, $this->allowedStatuses, true)) {
             throw new InvalidArgumentException(
-                'Column "status" must be one of: ' . join(', ', $this->allowedStatuses) . '.'
+                'Column "status" must be one of: ' . \join(', ', $this->allowedStatuses) . '.'
             );
         }
 
@@ -470,9 +470,9 @@ class Build extends Model
      */
     public function getExtra($key = null)
     {
-        $data  = json_decode($this->data['extra'], true);
+        $data  = \json_decode($this->data['extra'], true);
         $extra = null;
-        if (is_null($key)) {
+        if (\is_null($key)) {
             $extra = $data;
         } elseif (isset($data[$key])) {
             $extra = $data[$key];
@@ -489,7 +489,7 @@ class Build extends Model
      */
     public function setExtra(array $value)
     {
-        $extra = json_encode($value);
+        $extra = \json_encode($value);
         if ($this->data['extra'] === $extra) {
             return false;
         }
@@ -542,9 +542,9 @@ class Build extends Model
      */
     public function setSource(?int $value)
     {
-        if (!in_array($value, $this->allowedSources, true)) {
+        if (!\in_array($value, $this->allowedSources, true)) {
             throw new InvalidArgumentException(
-                'Column "source" must be one of: ' . join(', ', $this->allowedSources) . '.'
+                'Column "source" must be one of: ' . \join(', ', $this->allowedSources) . '.'
             );
         }
 
@@ -589,7 +589,7 @@ class Build extends Model
     public function getErrorsTotal()
     {
         if (null === $this->data['errors_total'] &&
-            !in_array($this->getStatus(), [self::STATUS_PENDING, self::STATUS_RUNNING], true)) {
+            !\in_array($this->getStatus(), [self::STATUS_PENDING, self::STATUS_RUNNING], true)) {
             /** @var BuildStore $store */
             $store = Factory::getStore('Build');
 
@@ -632,7 +632,7 @@ class Build extends Model
             if (isset($trend[1])) {
                 $previousBuild = $store->getById($trend[1]['build_id']);
                 if ($previousBuild &&
-                    !in_array(
+                    !\in_array(
                         $previousBuild->getStatus(),
                         [self::STATUS_PENDING, self::STATUS_RUNNING],
                         true
@@ -704,7 +704,7 @@ class Build extends Model
      */
     public function isDebug()
     {
-        if (defined('DEBUG_MODE') && DEBUG_MODE) {
+        if (\defined('DEBUG_MODE') && DEBUG_MODE) {
             return true;
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Store;
 
 use PDO;
@@ -50,7 +52,7 @@ class ProjectGroupStore extends Store
      */
     public function getById($id, $useConnection = 'read')
     {
-        if (is_null($id)) {
+        if (\is_null($id)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 
@@ -80,7 +82,7 @@ class ProjectGroupStore extends Store
      */
     public function getByTitle($title, $useConnection = 'read')
     {
-        if (is_null($title)) {
+        if (\is_null($title)) {
             throw new HttpException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
 

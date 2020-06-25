@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Command;
 
 use Monolog\Logger;
@@ -66,12 +68,12 @@ class RebuildQueueCommand extends Command
 
         $result = $buildStore->getByStatus(0);
 
-        $this->logger->addInfo(sprintf('Found %d builds', count($result['items'])));
+        $this->logger->addInfo(\sprintf('Found %d builds', \count($result['items'])));
 
         $buildService = new BuildService($buildStore, $projectStore);
 
-        while (count($result['items'])) {
-            $build   = array_shift($result['items']);
+        while (\count($result['items'])) {
+            $build   = \array_shift($result['items']);
             $build   = BuildFactory::getBuild($build);
             $project = $build->getProject();
 

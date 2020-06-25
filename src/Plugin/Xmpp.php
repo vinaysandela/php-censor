@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Builder;
@@ -11,7 +13,7 @@ use PHPCensor\Plugin;
  *
  * @author Alexandre Russo <dev.github@ange7.com>
  */
-class XMPP extends Plugin
+class Xmpp extends Plugin
 {
 
     /**
@@ -78,9 +80,9 @@ class XMPP extends Plugin
          * Set recipients list
          */
         if (!empty($options['recipients'])) {
-            if (is_string($options['recipients'])) {
+            if (\is_string($options['recipients'])) {
                 $this->recipients = [$options['recipients']];
-            } elseif (is_array($options['recipients'])) {
+            } elseif (\is_array($options['recipients'])) {
                 $this->recipients = $options['recipients'];
             }
         }
@@ -112,9 +114,9 @@ class XMPP extends Plugin
      */
     public function findConfigFile()
     {
-        if (file_exists($this->builder->buildPath . '.sendxmpprc')) {
-            if (md5(file_get_contents($this->builder->buildPath . '.sendxmpprc'))
-                !== md5($this->getConfigFormat())) {
+        if (\file_exists($this->builder->buildPath . '.sendxmpprc')) {
+            if (\md5(\file_get_contents($this->builder->buildPath . '.sendxmpprc'))
+                !== \md5($this->getConfigFormat())) {
                 return null;
             }
 
@@ -134,7 +136,7 @@ class XMPP extends Plugin
         /*
          * Without recipients we can't send notification
          */
-        if (!is_array($this->recipients) || count($this->recipients) == 0) {
+        if (!\is_array($this->recipients) || \count($this->recipients) == 0) {
             return false;
         }
 
@@ -142,9 +144,9 @@ class XMPP extends Plugin
          * Try to build conf file
          */
         $configFile = $this->builder->buildPath . '.sendxmpprc';
-        if (is_null($this->findConfigFile())) {
-            file_put_contents($configFile, $this->getConfigFormat());
-            chmod($configFile, 0600);
+        if (\is_null($this->findConfigFile())) {
+            \file_put_contents($configFile, $this->getConfigFormat());
+            \chmod($configFile, 0600);
         }
 
         /*
@@ -155,7 +157,7 @@ class XMPP extends Plugin
             $tls = ' -t';
         }
 
-        $messageFile = $this->builder->buildPath . uniqid('xmppmessage');
+        $messageFile = $this->builder->buildPath . \uniqid('xmppmessage');
         if ($this->buildMessage($messageFile) === false) {
             return false;
         }
@@ -164,7 +166,7 @@ class XMPP extends Plugin
          * Send XMPP notification for all recipients
          */
         $cmd        = $sendxmpp . "%s -f %s -m %s %s";
-        $recipients = implode(' ', $this->recipients);
+        $recipients = \implode(' ', $this->recipients);
 
         $success = $this->builder->executeCommand($cmd, $tls, $configFile, $messageFile, $recipients);
 
@@ -180,6 +182,7 @@ class XMPP extends Plugin
 
     /**
      * @param $messageFile
+     *
      * @return int
      */
     protected function buildMessage($messageFile)
@@ -190,8 +193,8 @@ class XMPP extends Plugin
             $message = "✘ [" . $this->build->getProjectTitle() . "] Build #" . $this->build->getId() . " failure";
         }
 
-        $message .= ' (' . strftime($this->dateFormat) . ')';
+        $message .= ' (' . \strftime($this->dateFormat) . ')';
 
-        return file_put_contents($messageFile, $message);
+        return \file_put_contents($messageFile, $message);
     }
 }

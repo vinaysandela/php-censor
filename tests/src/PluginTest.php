@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor;
 
 use PHPCensor\Builder;
@@ -79,7 +81,7 @@ class PluginTest extends TestCase
 
     public function setUp()
     {
-        $this->currentDir = rtrim(realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
+        $this->currentDir = \rtrim(\realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
 
         $this->builder = $this->createMock(Builder::class);
         $this->build   = $this->createMock(Build::class);
@@ -143,16 +145,16 @@ class PluginTest extends TestCase
         ];
 
         $plugin = new TestPlugin($this->builder, $this->build, $options);
-        self::assertEquals(dirname(__DIR__) . '/data/builds/', $plugin->getDirectory());
+        self::assertEquals(\dirname(__DIR__) . '/data/builds/', $plugin->getDirectory());
 
         $options = [
             'directory' => '../../',
         ];
 
         $plugin = new TestPlugin($this->builder, $this->build, $options);
-        self::assertEquals(dirname(__DIR__) . '/data/', $plugin->getDirectory());
+        self::assertEquals(\dirname(__DIR__) . '/data/', $plugin->getDirectory());
 
-        $absoluteRealPath = rtrim(realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
+        $absoluteRealPath = \rtrim(\realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
 
         $options = [
             'directory' => $absoluteRealPath,
@@ -215,7 +217,7 @@ class PluginTest extends TestCase
 
         $this->builder->ignore = [
             './vendor',
-            'tests'
+            'tests',
         ];
 
         $options = [
@@ -225,12 +227,12 @@ class PluginTest extends TestCase
         $plugin = new TestPlugin($this->builder, $this->build, $options);
         self::assertEquals([
             'vendor',
-            'tests'
+            'tests',
         ], $plugin->getIgnore());
 
         $this->builder->ignore = [
             './vendor',
-            'tests'
+            'tests',
         ];
 
         $options = [
@@ -277,7 +279,7 @@ class PluginTest extends TestCase
         self::assertEquals('/builder/bin/', $plugin->getBinaryPath());
         self::assertEquals(['example1', 'example2'], $plugin->getBinaryName());
 
-        $absoluteRealPath          = rtrim(realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
+        $absoluteRealPath          = \rtrim(\realpath(__DIR__ . '/../data/builds/build_x/'), '/\\') . '/';
         $this->builder->binaryPath = $this->builder->interpolate($absoluteRealPath . '%COMMIT_ID%/');
 
         $plugin = new TestPlugin($this->builder, $this->build, []);

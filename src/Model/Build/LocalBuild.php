@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Model\Build;
 
 use Exception;
@@ -26,12 +28,12 @@ class LocalBuild extends Build
     public function createWorkingCopy(Builder $builder, $buildPath)
     {
         $reference  = $this->getProject()->getReference();
-        $reference  = substr($reference, -1) == '/' ? substr($reference, 0, -1) : $reference;
-        $buildPath  = substr($buildPath, 0, -1);
+        $reference  = \substr($reference, -1) == '/' ? \substr($reference, 0, -1) : $reference;
+        $buildPath  = \substr($buildPath, 0, -1);
 
         // If there's a /config file in the reference directory, it is probably a bare repository
         // which we'll extract into our build path directly.
-        if (is_file($reference . '/config') &&
+        if (\is_file($reference . '/config') &&
             true === $this->handleBareRepository($builder, $reference, $buildPath)) {
             return $this->handleConfig($builder, $buildPath);
         }
@@ -46,10 +48,10 @@ class LocalBuild extends Build
 
         if (isset($buildSettings['prefer_symlink']) && $buildSettings['prefer_symlink'] === true) {
             return $this->handleSymlink($builder, $reference, $buildPath);
-        } else {
-            $cmd = 'mkdir -p "%s" && cp -Rf %s/* "%s/"';
-            $builder->executeCommand($cmd, $buildPath, $reference, $buildPath);
         }
+        $cmd = 'mkdir -p "%s" && cp -Rf %s/* "%s/"';
+        $builder->executeCommand($cmd, $buildPath, $reference, $buildPath);
+
 
         return true;
     }
@@ -65,7 +67,7 @@ class LocalBuild extends Build
      */
     protected function handleBareRepository(Builder $builder, $reference, $buildPath)
     {
-        $gitConfig = parse_ini_file($reference.'/config', true);
+        $gitConfig = \parse_ini_file($reference.'/config', true);
 
         // If it is indeed a bare repository, then extract it into our build path:
         if ($gitConfig['core']['bare']) {
@@ -88,13 +90,13 @@ class LocalBuild extends Build
      */
     protected function handleSymlink(Builder $builder, $reference, $buildPath)
     {
-        if (is_link($buildPath) && is_file($buildPath)) {
-            unlink($buildPath);
+        if (\is_link($buildPath) && \is_file($buildPath)) {
+            \unlink($buildPath);
         }
 
-        $builder->log(sprintf('Symlinking: %s to %s', $reference, $buildPath));
+        $builder->log(\sprintf('Symlinking: %s to %s', $reference, $buildPath));
 
-        if (!symlink($reference, $buildPath)) {
+        if (!\symlink($reference, $buildPath)) {
             $builder->logFailure('Failed to symlink.');
             return false;
         }

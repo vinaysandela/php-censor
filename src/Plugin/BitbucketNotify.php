@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -60,6 +62,7 @@ class BitbucketNotify extends Plugin
 
     /**
      * {@inheritdoc}
+     *
      * @throws Exception
      */
     public function __construct(Builder $builder, Build $build, array $options = [])
@@ -68,7 +71,7 @@ class BitbucketNotify extends Plugin
 
         $this->pdo = Database::getConnection('read');
         $this->httpClient = new Client();
-        $this->url = trim($options['url']);
+        $this->url = \trim($options['url']);
         $this->message = isset($options['message']) ? $options['message'] : '';
         $this->token = $options['token'];
         $this->projectKey = $options['project_key'];
@@ -98,8 +101,8 @@ class BitbucketNotify extends Plugin
                 $chart   = APP_URL . 'artifacts/pdepend/' . $buildDirectory . '/chart.svg';
                 $pyramid = APP_URL . 'artifacts/pdepend/' . $buildDirectory . '/pyramid.svg';
 
-                $this->message .= sprintf('![Chart](%s "Pdepend Chart")', $chart);
-                $this->message .= sprintf('![Pyramid](%s "Pdepend Pyramid")', $pyramid) . PHP_EOL;
+                $this->message .= \sprintf('![Chart](%s "Pdepend Chart")', $chart);
+                $this->message .= \sprintf('![Pyramid](%s "Pdepend Pyramid")', $pyramid) . PHP_EOL;
                 $this->message .= $summary . PHP_EOL;
             }
         }
@@ -116,6 +119,7 @@ class BitbucketNotify extends Plugin
 
     /**
      * @return bool
+     *
      * @throws Exception
      */
     public function execute()
@@ -153,9 +157,9 @@ class BitbucketNotify extends Plugin
      */
     protected function findPullRequestsByBranch()
     {
-        $endpoint = sprintf('/projects/%s/repos/%s/pull-requests', $this->projectKey, $this->repositorySlug);
+        $endpoint = \sprintf('/projects/%s/repos/%s/pull-requests', $this->projectKey, $this->repositorySlug);
         $response = $this->apiRequest($endpoint)->getBody();
-        $response = json_decode($response, true);
+        $response = \json_decode($response, true);
 
         foreach ($response['values'] as $pullRequest) {
             if ($pullRequest['fromRef']['displayId'] === $this->getBuild()->getBranch()) {
@@ -168,7 +172,7 @@ class BitbucketNotify extends Plugin
 
     protected function getTargetBranchForPullRequest($pullRequestId)
     {
-        $endpoint = sprintf(
+        $endpoint = \sprintf(
             '/projects/%s/repos/%s/pull-requests/%d',
             $this->projectKey,
             $this->repositorySlug,
@@ -176,7 +180,7 @@ class BitbucketNotify extends Plugin
         );
 
         $response = $this->apiRequest($endpoint)->getBody();
-        $response = json_decode($response, true);
+        $response = \json_decode($response, true);
 
         return $response['toRef']['displayId'];
     }
@@ -184,11 +188,12 @@ class BitbucketNotify extends Plugin
     /**
      * @param int $pullRequestId
      * @param string $message
+     *
      * @return int
      */
     protected function createCommentInPullRequest($pullRequestId, $message)
     {
-        $endpoint = sprintf(
+        $endpoint = \sprintf(
             '/projects/%s/repos/%s/pull-requests/%s/comments',
             $this->projectKey,
             $this->repositorySlug,
@@ -196,7 +201,7 @@ class BitbucketNotify extends Plugin
         );
 
         $response = $this->apiRequest($endpoint, 'post', ['text' => $message])->getBody();
-        $response = json_decode($response, true);
+        $response = \json_decode($response, true);
 
         return (int)$response['id'];
     }
@@ -219,7 +224,7 @@ class BitbucketNotify extends Plugin
 
     protected function updateBuild()
     {
-        $endpoint = sprintf(
+        $endpoint = \sprintf(
             '/commits/%s',
             $this->getBuild()->getCommitId()
         );
@@ -246,7 +251,9 @@ class BitbucketNotify extends Plugin
 
     /**
      * @param string $targetBranch
+     *
      * @return BitbucketNotifyPluginResult[]
+     *
      * @throws Exception
      */
     protected function prepareResult($targetBranch)
@@ -264,8 +271,8 @@ class BitbucketNotify extends Plugin
             return [];
         }
 
-        $plugins = array_unique(array_merge(array_keys($targetBranchBuildStats), array_keys($currentBranchBuildStats)));
-        sort($plugins);
+        $plugins = \array_unique(\array_merge(\array_keys($targetBranchBuildStats), \array_keys($currentBranchBuildStats)));
+        \sort($plugins);
 
         $result = [];
         foreach ($plugins as $plugin) {
@@ -282,7 +289,9 @@ class BitbucketNotify extends Plugin
 
     /**
      * @param string $targetBranch
+     *
      * @return BitbucketNotifyPluginResult
+     *
      * @throws Exception
      */
     public function getPhpUnitCoverage($targetBranch)
@@ -302,13 +311,13 @@ class BitbucketNotify extends Plugin
         );
 
         $targetBranchCoverage = [];
-        if (!is_null($latestTargeBuildId) && !is_null($targetMetaData)) {
-            $targetBranchCoverage = json_decode($targetMetaData->getMetaValue(), true);
+        if (!\is_null($latestTargeBuildId) && !\is_null($targetMetaData)) {
+            $targetBranchCoverage = \json_decode($targetMetaData->getMetaValue(), true);
         }
 
         $currentBranchCoverage = [];
-        if (!is_null($currentMetaData)) {
-            $currentBranchCoverage = json_decode($currentMetaData->getMetaValue(), true);
+        if (!\is_null($currentMetaData)) {
+            $currentBranchCoverage = \json_decode($currentMetaData->getMetaValue(), true);
         }
 
         return new Plugin\Util\BitbucketNotifyPhpUnitResult(
@@ -320,13 +329,14 @@ class BitbucketNotify extends Plugin
 
     /**
      * @param Util\BitbucketNotifyPluginResult[] $plugins
+     *
      * @return array
      */
     protected function buildResultComparator(array $plugins)
     {
         $maxPluginNameLength = 20;
         if (!empty($plugins)) {
-            $maxPluginNameLength = max(array_map('strlen', $plugins));
+            $maxPluginNameLength = \max(\array_map('strlen', $plugins));
         }
 
         $lines = [];
@@ -339,19 +349,21 @@ class BitbucketNotify extends Plugin
 
     protected function reportGenerator(array $stats)
     {
-        $statsString = trim(implode(PHP_EOL, $stats));
+        $statsString = \trim(\implode(PHP_EOL, $stats));
         if (empty($stats)) {
             $statsString = 'no changes between your branch and target branch';
         }
 
-        $message = str_replace(['%STATS%'], [$statsString], $this->message);
+        $message = \str_replace(['%STATS%'], [$statsString], $this->message);
 
         return $this->builder->interpolate($message);
     }
 
     /**
      * @param $branchName
+     *
      * @return int
+     *
      * @throws Exception
      */
     protected function findLatestBuild($branchName)

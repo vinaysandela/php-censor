@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\ProcessControl;
 
 /**
@@ -17,7 +19,7 @@ class PosixProcessControl implements ProcessControlInterface
     public function isRunning($pid)
     {
         // Signal "0" is not sent to the process, but posix_kill checks the process anyway;
-        return posix_kill($pid, 0);
+        return \posix_kill($pid, 0);
     }
 
     /**
@@ -25,7 +27,7 @@ class PosixProcessControl implements ProcessControlInterface
      */
     public function kill($pid, $forcefully = false)
     {
-        return posix_kill($pid, $forcefully ? 9 : 15);
+        return \posix_kill($pid, $forcefully ? 9 : 15);
     }
 
     /**
@@ -37,6 +39,6 @@ class PosixProcessControl implements ProcessControlInterface
      */
     public static function isAvailable()
     {
-        return function_exists('posix_kill');
+        return \function_exists('posix_kill');
     }
 }

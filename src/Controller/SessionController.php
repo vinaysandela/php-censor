@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Controller;
 
 use PHPCensor\Config;
@@ -150,15 +152,15 @@ class SessionController extends WebController
                     $_SESSION['php-censor-user-id'] = $user->getId();
 
                     if ($rememberMe) {
-                        $rememberKey = md5(microtime(true));
+                        $rememberKey = \md5(\microtime(true));
 
                         $user->setRememberKey($rememberKey);
                         $this->userStore->save($user);
 
-                        setcookie(
+                        \setcookie(
                             'remember_key',
                             $rememberKey,
-                            (time() + 60 * 60 * 24 * 30),
+                            (\time() + 60 * 60 * 24 * 30),
                             null,
                             null,
                             null,
@@ -187,12 +189,12 @@ class SessionController extends WebController
     {
         unset($_SESSION['php-censor-user-id']);
 
-        session_destroy();
+        \session_destroy();
 
-        setcookie(
+        \setcookie(
             'remember_key',
             null,
-            (time() - 1),
+            (\time() - 1),
             null,
             null,
             null,
@@ -222,7 +224,7 @@ class SessionController extends WebController
                 return $this->view->render();
             }
 
-            $key     = md5(date('Y-m-d') . $user->getHash());
+            $key     = \md5(\date('Y-m-d') . $user->getHash());
             $message = Lang::get('reset_email_body', $user->getName(), APP_URL, $user->getId(), $key);
 
             $email = new Email(Config::getInstance());
@@ -239,14 +241,16 @@ class SessionController extends WebController
 
     /**
      * Allows the user to change their password after a password reset email.
+     *
      * @param $userId
      * @param $key
+     *
      * @return string
      */
     public function resetPassword($userId, $key)
     {
         $user = $this->userStore->getById($userId);
-        $userKey = md5(date('Y-m-d') . $user->getHash());
+        $userKey = \md5(\date('Y-m-d') . $user->getHash());
 
         if (empty($user) || $key != $userKey) {
             $this->view->error = Lang::get('reset_invalid');
@@ -254,7 +258,7 @@ class SessionController extends WebController
         }
 
         if ($this->request->getMethod() == 'POST') {
-            $hash = password_hash($this->getParam('password'), PASSWORD_DEFAULT);
+            $hash = \password_hash($this->getParam('password'), PASSWORD_DEFAULT);
             $user->setHash($hash);
 
             $this->userStore->save($user);

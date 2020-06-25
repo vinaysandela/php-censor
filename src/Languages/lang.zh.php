@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'language_name' => '简体中文',
     'language' => '语言选择',
@@ -17,7 +19,7 @@ return [
     'reset_change_password' => '更改密码',
     'reset_no_user_exists' => '不存该该邮箱用户，请检查后重试！',
     'reset_email_body' => '您好 %s,
-    
+
 您收到这封邮件，是因为您或者别人发起了来自PHP Censor的密码重置请求。
 
 如果确实是您发起的，请点击链接去重置您的密码：%ssession/reset-password/%d/%s
@@ -128,8 +130,8 @@ PHP Censor',
     'delete_build' => '删除构建',
 
     'webhooks' => 'Webhooks',
-    'webhooks_help_github' => '要想当您的仓库由新的提交推送时自动构建，请在您的Github仓库的 
-                                <a href="https://github.com/%s/settings/hooks">Webhooks and Services</a> 
+    'webhooks_help_github' => '要想当您的仓库由新的提交推送时自动构建，请在您的Github仓库的
+                                <a href="https://github.com/%s/settings/hooks">Webhooks and Services</a>
                                 将该URL添加至新增 "Webhook" 中。',
 
     'webhooks_help_gitlab' => '要想当您的仓库由新的提交推送时自动构建，请在您的GitLab仓库的 "WebHook URL" 添加该URL。',

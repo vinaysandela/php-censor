@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Config;
@@ -38,7 +40,7 @@ class Email extends Plugin
 
         // Without some email addresses in the yml file then we
         // can't do anything.
-        if (count($addresses) == 0) {
+        if (\count($addresses) == 0) {
             return false;
         }
 
@@ -49,7 +51,7 @@ class Email extends Plugin
             $view = $this->getMailTemplate();
         } catch (RuntimeException $e) {
             $this->builder->log(
-                sprintf('Unknown mail template "%s", falling back to default.', $this->options['template']),
+                \sprintf('Unknown mail template "%s", falling back to default.', $this->options['template']),
                 LogLevel::WARNING
             );
             $view = $this->getDefaultMailTemplate();
@@ -66,13 +68,13 @@ class Email extends Plugin
 
         $sendFailures = $this->sendSeparateEmails(
             $addresses,
-            sprintf("PHP Censor - %s - %s", $projectName, $buildStatus),
+            \sprintf("PHP Censor - %s - %s", $projectName, $buildStatus),
             $body
         );
 
         // This is a success if we've not failed to send anything.
-        $this->builder->log(sprintf('%d emails sent.', (count($addresses) - $sendFailures)));
-        $this->builder->log(sprintf('%d emails failed to send.', $sendFailures));
+        $this->builder->log(\sprintf('%d emails sent.', (\count($addresses) - $sendFailures)));
+        $this->builder->log(\sprintf('%d emails failed to send.', $sendFailures));
 
         return ($sendFailures === 0);
     }
@@ -94,7 +96,7 @@ class Email extends Plugin
         $email->setBody($body);
         $email->setHtml(true);
 
-        if (is_array($ccList) && count($ccList)) {
+        if (\is_array($ccList) && \count($ccList)) {
             foreach ($ccList as $address) {
                 $email->addCc($address, $address);
             }
@@ -131,6 +133,7 @@ class Email extends Plugin
 
     /**
      * Get the list of email addresses to send to.
+     *
      * @return array
      */
     protected function getEmailAddresses()
@@ -138,8 +141,8 @@ class Email extends Plugin
         $addresses = [];
         $committer = $this->build->getCommitterEmail();
 
-        $this->builder->logDebug(sprintf("Committer email: '%s'", $committer));
-        $this->builder->logDebug(sprintf(
+        $this->builder->logDebug(\sprintf("Committer email: '%s'", $committer));
+        $this->builder->logDebug(\sprintf(
             "Committer option: '%s'",
             (!empty($this->options['committer']) && $this->options['committer']) ? 'true' : 'false'
         ));
@@ -150,18 +153,18 @@ class Email extends Plugin
             }
         }
 
-        $this->builder->logDebug(sprintf(
+        $this->builder->logDebug(\sprintf(
             "Addresses option: '%s'",
-            (!empty($this->options['addresses']) && is_array($this->options['addresses'])) ? implode(', ', $this->options['addresses']) : 'false'
+            (!empty($this->options['addresses']) && \is_array($this->options['addresses'])) ? \implode(', ', $this->options['addresses']) : 'false'
         ));
 
-        if (!empty($this->options['addresses']) && is_array($this->options['addresses'])) {
+        if (!empty($this->options['addresses']) && \is_array($this->options['addresses'])) {
             foreach ($this->options['addresses'] as $address) {
                 $addresses[] = $address;
             }
         }
 
-        $this->builder->logDebug(sprintf(
+        $this->builder->logDebug(\sprintf(
             "Default mailTo option: '%s'",
             !empty($this->options['default_mailto_address']) ? $this->options['default_mailto_address'] : 'false'
         ));
@@ -170,7 +173,7 @@ class Email extends Plugin
             $addresses[] = $this->options['default_mailto_address'];
         }
 
-        return array_unique($addresses);
+        return \array_unique($addresses);
     }
 
     /**

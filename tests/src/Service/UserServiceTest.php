@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Service;
 
 use PHPCensor\Model\User;
@@ -48,7 +50,7 @@ class UserServiceTest extends TestCase
         self::assertEquals('Test', $user->getName());
         self::assertEquals('test@example.com', $user->getEmail());
         self::assertEquals(false, $user->getIsAdmin());
-        self::assertTrue(password_verify('testing', $user->getHash()));
+        self::assertTrue(\password_verify('testing', $user->getHash()));
     }
 
     public function testExecute_CreateAdminUser()
@@ -90,19 +92,19 @@ class UserServiceTest extends TestCase
     public function testExecute_ChangesPasswordIfNotEmpty()
     {
         $user = new User();
-        $user->setHash(password_hash('testing', PASSWORD_DEFAULT));
+        $user->setHash(\password_hash('testing', PASSWORD_DEFAULT));
 
         $user = $this->testedService->updateUser($user, 'Test', 'test@example.com', 'newpassword', false);
-        self::assertFalse(password_verify('testing', $user->getHash()));
-        self::assertTrue(password_verify('newpassword', $user->getHash()));
+        self::assertFalse(\password_verify('testing', $user->getHash()));
+        self::assertTrue(\password_verify('newpassword', $user->getHash()));
     }
 
     public function testExecute_DoesNotChangePasswordIfEmpty()
     {
         $user = new User();
-        $user->setHash(password_hash('testing', PASSWORD_DEFAULT));
+        $user->setHash(\password_hash('testing', PASSWORD_DEFAULT));
 
         $user = $this->testedService->updateUser($user, 'Test', 'test@example.com', '', false);
-        self::assertTrue(password_verify('testing', $user->getHash()));
+        self::assertTrue(\password_verify('testing', $user->getHash()));
     }
 }

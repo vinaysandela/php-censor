@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Form\Validator;
 
 use PHPCensor\Form\Validator\Yaml;
@@ -12,7 +14,7 @@ class YamlValidatorTest extends TestCase
         return [
             ["php-censor:\n    language: en\n    per_page: 10\n\n"],
             ["build_settings:\n  clone_depth: 1\n\nsetup:\n    composer:\n        action: \"install\"\n        directory: \"core/libraries\""],
-            ["{  }"]
+            ["{  }"],
         ];
     }
 
@@ -31,7 +33,7 @@ class YamlValidatorTest extends TestCase
     public function testYamlValidatorSuccess($value)
     {
         $validator = new Yaml();
-        $result = call_user_func_array($validator, [$value]);
+        $result = \call_user_func_array($validator, [$value]);
         $this->assertTrue($result);
     }
 
@@ -42,6 +44,6 @@ class YamlValidatorTest extends TestCase
     {
         $this->expectException('Exception');
         $validator = new Yaml();
-        call_user_func_array($validator, [$value]);
+        \call_user_func_array($validator, [$value]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -38,17 +40,19 @@ class FlowdockNotify extends Plugin
     {
         parent::__construct($builder, $build, $options);
 
-        if (!is_array($options) || !isset($options['api_key'])) {
+        if (!\is_array($options) || !isset($options['api_key'])) {
             throw new Exception('Please define the api_key for Flowdock Notify plugin!');
         }
-        $this->apiKey  = trim($options['api_key']);
+        $this->apiKey  = \trim($options['api_key']);
         $this->message = isset($options['message']) ? $options['message'] : self::MESSAGE_DEFAULT;
         $this->email   = isset($options['email']) ? $options['email'] : 'PHP Censor';
     }
 
     /**
      * Run the Flowdock plugin.
+     *
      * @return bool
+     *
      * @throws Exception
      */
     public function execute()
@@ -66,7 +70,7 @@ class FlowdockNotify extends Plugin
             ->setContent($message);
 
         if (!$push->sendTeamInboxMessage($flowMessage, ['connect_timeout' => 5000, 'timeout' => 5000])) {
-            throw new Exception(sprintf('Flowdock Failed: %s', $flowMessage->getResponseErrors()));
+            throw new Exception(\sprintf('Flowdock Failed: %s', $flowMessage->getResponseErrors()));
         }
         return true;
     }

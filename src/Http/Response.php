@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Http;
 
 class Response
@@ -8,7 +10,7 @@ class Response
 
     public function __construct(Response $createFrom = null)
     {
-        if (!is_null($createFrom)) {
+        if (!\is_null($createFrom)) {
             $this->data = $createFrom->getData();
         }
     }
@@ -49,7 +51,7 @@ class Response
 
         if (isset($this->data['headers'])) {
             foreach ($this->data['headers'] as $header => $val) {
-                header($header . ': ' . $val, true);
+                \header($header . ': ' . $val, true);
             }
         }
 
@@ -97,7 +99,7 @@ class Response
                 break;
         }
 
-        header('HTTP/1.1 ' . $this->data['code'] . ' ' . $text, true, $this->data['code']);
+        \header('HTTP/1.1 ' . $this->data['code'] . ' ' . $text, true, $this->data['code']);
     }
 
     protected function flushBody()

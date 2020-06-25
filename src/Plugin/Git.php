@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use PHPCensor\Builder;
@@ -35,12 +37,13 @@ class Git extends Plugin
 
     /**
      * Run the Git plugin.
+     *
      * @return bool
      */
     public function execute()
     {
         // Check if there are any actions to be run for the branch we're running on:
-        if (!array_key_exists($this->build->getBranch(), $this->actions)) {
+        if (!\array_key_exists($this->build->getBranch(), $this->actions)) {
             return true;
         }
 
@@ -57,8 +60,10 @@ class Git extends Plugin
 
     /**
      * Determine which action to run, and run it.
+     *
      * @param $action
      * @param array $options
+     *
      * @return bool
      */
     protected function runAction($action, array $options = [])
@@ -83,12 +88,14 @@ class Git extends Plugin
 
     /**
      * Handle a merge action.
+     *
      * @param $options
+     *
      * @return bool
      */
     protected function runMergeAction($options)
     {
-        if (array_key_exists('branch', $options)) {
+        if (\array_key_exists('branch', $options)) {
             $cmd = 'cd "%s" && git checkout %s && git merge "%s"';
             $path = $this->builder->buildPath;
             return $this->builder->executeCommand($cmd, $path, $options['branch'], $this->build->getBranch());
@@ -97,19 +104,21 @@ class Git extends Plugin
 
     /**
      * Handle a tag action.
+     *
      * @param $options
+     *
      * @return bool
      */
     protected function runTagAction($options)
     {
-        $tagName = date('Ymd-His');
-        $message = sprintf('Tag created by PHP Censor: %s', date('Y-m-d H:i:s'));
+        $tagName = \date('Ymd-His');
+        $message = \sprintf('Tag created by PHP Censor: %s', \date('Y-m-d H:i:s'));
 
-        if (array_key_exists('name', $options)) {
+        if (\array_key_exists('name', $options)) {
             $tagName = $this->builder->interpolate($options['name']);
         }
 
-        if (array_key_exists('message', $options)) {
+        if (\array_key_exists('message', $options)) {
             $message = $this->builder->interpolate($options['message']);
         }
 
@@ -119,7 +128,9 @@ class Git extends Plugin
 
     /**
      * Handle a pull action.
+     *
      * @param $options
+     *
      * @return bool
      */
     protected function runPullAction($options)
@@ -127,11 +138,11 @@ class Git extends Plugin
         $branch = $this->build->getBranch();
         $remote = 'origin';
 
-        if (array_key_exists('branch', $options)) {
+        if (\array_key_exists('branch', $options)) {
             $branch = $this->builder->interpolate($options['branch']);
         }
 
-        if (array_key_exists('remote', $options)) {
+        if (\array_key_exists('remote', $options)) {
             $remote = $this->builder->interpolate($options['remote']);
         }
 
@@ -140,7 +151,9 @@ class Git extends Plugin
 
     /**
      * Handle a push action.
+     *
      * @param $options
+     *
      * @return bool
      */
     protected function runPushAction($options)
@@ -148,11 +161,11 @@ class Git extends Plugin
         $branch = $this->build->getBranch();
         $remote = 'origin';
 
-        if (array_key_exists('branch', $options)) {
+        if (\array_key_exists('branch', $options)) {
             $branch = $this->builder->interpolate($options['branch']);
         }
 
-        if (array_key_exists('remote', $options)) {
+        if (\array_key_exists('remote', $options)) {
             $remote = $this->builder->interpolate($options['remote']);
         }
 

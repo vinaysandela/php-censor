@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Security\Authentication\UserProvider;
 
 use PHPCensor\Model\User;
@@ -24,7 +26,7 @@ class InternalTest extends TestCase
     {
         $user = new User();
         $password = 'bla';
-        $user->setHash(password_hash($password, PASSWORD_DEFAULT));
+        $user->setHash(\password_hash($password, PASSWORD_DEFAULT));
 
         self::assertTrue($this->provider->verifyPassword($user, $password));
     }
@@ -33,7 +35,7 @@ class InternalTest extends TestCase
     {
         $user = new User();
         $password = 'foo';
-        $user->setHash(password_hash($password, PASSWORD_DEFAULT));
+        $user->setHash(\password_hash($password, PASSWORD_DEFAULT));
 
         self::assertFalse($this->provider->verifyPassword($user, 'bar'));
     }

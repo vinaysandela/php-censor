@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Logging;
 
 use ErrorException;
@@ -41,16 +43,17 @@ class Handler
 
     /**
      * Register a new log handler.
+     *
      * @param LoggerInterface $logger
      */
     public static function register(LoggerInterface $logger = null)
     {
         $handler = new static($logger);
 
-        set_error_handler([$handler, 'handleError']);
-        register_shutdown_function([$handler, 'handleFatalError']);
+        \set_error_handler([$handler, 'handleError']);
+        \register_shutdown_function([$handler, 'handleFatalError']);
 
-        set_exception_handler([$handler, 'handleException']);
+        \set_exception_handler([$handler, 'handleException']);
     }
 
     /**
@@ -63,11 +66,11 @@ class Handler
      */
     public function handleError($level, $message, $file, $line)
     {
-        if (error_reporting() & $level) {
+        if (\error_reporting() & $level) {
             $exceptionLevel = isset($this->levels[$level]) ? $this->levels[$level] : $level;
 
             throw new ErrorException(
-                sprintf('%s: %s in %s line %d', $exceptionLevel, $message, $file, $line),
+                \sprintf('%s: %s in %s line %d', $exceptionLevel, $message, $file, $line),
                 0,
                 $level,
                 $file,
@@ -81,12 +84,12 @@ class Handler
      */
     public function handleFatalError()
     {
-        $fatalError = error_get_last();
+        $fatalError = \error_get_last();
 
         try {
-            if (($error = error_get_last()) !== null) {
+            if (($error = \error_get_last()) !== null) {
                 $error = new ErrorException(
-                    sprintf(
+                    \sprintf(
                         '%s: %s in %s line %d',
                         $fatalError['type'],
                         $fatalError['message'],
@@ -102,7 +105,7 @@ class Handler
             }
         } catch (Exception $e) {
             $error = new ErrorException(
-                sprintf(
+                \sprintf(
                     '%s: %s in %s line %d',
                     $fatalError['type'],
                     $fatalError['message'],
@@ -128,14 +131,15 @@ class Handler
 
     /**
      * Write to the build log.
+     *
      * @param $exception
      */
     protected function log($exception)
     {
         if (null !== $this->logger) {
-            $message = sprintf(
+            $message = \sprintf(
                 '%s: %s (uncaught exception) at %s line %s',
-                get_class($exception),
+                \get_class($exception),
                 $exception->getMessage(),
                 $exception->getFile(),
                 $exception->getLine()

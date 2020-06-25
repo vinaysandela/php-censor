@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -75,7 +77,7 @@ class Phing extends Plugin
         $cmd[] = $this->targetsToString();
         $cmd[] = '2>&1';
 
-        return $this->builder->executeCommand(implode(' ', $cmd), $this->directory, $this->targets);
+        return $this->builder->executeCommand(\implode(' ', $cmd), $this->directory, $this->targets);
     }
 
     /**
@@ -88,11 +90,12 @@ class Phing extends Plugin
 
     /**
      * Converts an array of targets into a string.
+     *
      * @return string
      */
     private function targetsToString()
     {
-        return implode(' ', $this->targets);
+        return \implode(' ', $this->targets);
     }
 
     /**
@@ -102,7 +105,7 @@ class Phing extends Plugin
      */
     public function setTargets($targets)
     {
-        if (is_string($targets)) {
+        if (\is_string($targets)) {
             $targets = [$targets];
         }
 
@@ -121,11 +124,12 @@ class Phing extends Plugin
      * @param mixed $buildFile
      *
      * @return $this
+     *
      * @throws Exception
      */
     public function setBuildFile($buildFile)
     {
-        if (!file_exists($this->directory . $buildFile)) {
+        if (!\file_exists($this->directory . $buildFile)) {
             throw new Exception('Specified build file does not exist.');
         }
 
@@ -134,6 +138,7 @@ class Phing extends Plugin
 
     /**
      * Get phing build file path.
+     *
      * @return string
      */
     public function getBuildFilePath()
@@ -156,6 +161,7 @@ class Phing extends Plugin
     {
         /**
          * fix the problem when execute phing out of the build dir
+         *
          * @ticket 748
          */
         if (!isset($this->properties['project.basedir'])) {
@@ -168,7 +174,7 @@ class Phing extends Plugin
             $propertiesString[] = '-D' . $name . '="' . $value . '"';
         }
 
-        return implode(' ', $propertiesString);
+        return \implode(' ', $propertiesString);
     }
 
     /**
@@ -178,7 +184,7 @@ class Phing extends Plugin
      */
     public function setProperties($properties)
     {
-        if (is_string($properties)) {
+        if (\is_string($properties)) {
             $properties = [$properties];
         }
 
@@ -197,11 +203,12 @@ class Phing extends Plugin
      * @param string $propertyFile
      *
      * @return $this
+     *
      * @throws Exception
      */
     public function setPropertyFile($propertyFile)
     {
-        if (!file_exists($this->directory . '/' . $propertyFile)) {
+        if (!\file_exists($this->directory . '/' . $propertyFile)) {
             throw new Exception('Specified property file does not exist.');
         }
 

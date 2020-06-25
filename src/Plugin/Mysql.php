@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PHPCensor\Plugin;
 
 use Exception;
@@ -121,13 +123,14 @@ class Mysql extends Plugin
 
     /**
     * Connects to MySQL and runs a specified set of queries.
+    *
     * @return bool
     */
     public function execute()
     {
         try {
             $pdoOptions = \array_merge([
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ], $this->pdoOptions);
             $dsn     = \sprintf('mysql:host=%s;port=%s', $this->host, $this->port);
 
@@ -169,8 +172,8 @@ class Mysql extends Plugin
         }
 
         $importFile = $this->builder->buildPath . $this->builder->interpolate($query['file']);
-        if (!is_readable($importFile)) {
-            throw new Exception(sprintf('Cannot open SQL import file: %s', $importFile));
+        if (!\is_readable($importFile)) {
+            throw new Exception(\sprintf('Cannot open SQL import file: %s', $importFile));
         }
 
         $database = isset($query['database']) ? $this->builder->interpolate($query['database']) : null;
@@ -198,21 +201,21 @@ class Mysql extends Plugin
             'gz'  => '| gzip --decompress',
         ];
 
-        $extension        = strtolower(pathinfo($importFile, PATHINFO_EXTENSION));
+        $extension        = \strtolower(\pathinfo($importFile, PATHINFO_EXTENSION));
         $decompressionCmd = '';
-        if (array_key_exists($extension, $decompression)) {
+        if (\array_key_exists($extension, $decompression)) {
             $decompressionCmd = $decompression[$extension];
         }
 
         $args = [
-            ':import_file' => escapeshellarg($importFile),
+            ':import_file' => \escapeshellarg($importFile),
             ':decomp_cmd'  => $decompressionCmd,
-            ':host'        => escapeshellarg($this->host),
-            ':user'        => escapeshellarg($this->user),
-            ':pass'        => (!$this->password) ? '' : '-p' . escapeshellarg($this->password),
-            ':database'    => ($database === null)? '': escapeshellarg($database),
+            ':host'        => \escapeshellarg($this->host),
+            ':user'        => \escapeshellarg($this->user),
+            ':pass'        => (!$this->password) ? '' : '-p' . \escapeshellarg($this->password),
+            ':database'    => ($database === null)? '': \escapeshellarg($database),
         ];
 
-        return strtr('cat :import_file :decomp_cmd | mysql -h:host -u:user :pass :database', $args);
+        return \strtr('cat :import_file :decomp_cmd | mysql -h:host -u:user :pass :database', $args);
     }
 }

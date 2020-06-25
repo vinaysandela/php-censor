@@ -6,7 +6,6 @@ namespace PHPCensor\Model\Base;
 
 use DateTime;
 use Exception;
-use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
 
 class ProjectGroup extends Model

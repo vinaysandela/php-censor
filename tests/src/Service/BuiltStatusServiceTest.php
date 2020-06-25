@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\PHPCensor\Service;
 
 use DateTime;
@@ -13,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Dan Cryer <dan@block8.co.uk>
  */
-class BuildStatusServiceTest extends TestCase
+class BuiltStatusServiceTest extends TestCase
 {
     const BRANCH = 'master';
 
@@ -30,19 +32,20 @@ class BuildStatusServiceTest extends TestCase
         $project->setTitle('Test');
 
         $this->project = $project;
-        $this->timezone = date_default_timezone_get();
+        $this->timezone = \date_default_timezone_get();
 
-        date_default_timezone_set('UTC');
+        \date_default_timezone_set('UTC');
     }
 
     public function tearDown()
     {
-        date_default_timezone_set($this->timezone);
+        \date_default_timezone_set($this->timezone);
     }
 
     /**
      * @param $configId
      * @param bool $setProject
+     *
      * @return Build
      */
     protected function getBuild($configId, $setProject = true)
@@ -80,7 +83,7 @@ class BuildStatusServiceTest extends TestCase
                 'id'             => 1000,
                 'finishDateTime' => '2014-12-25 21:12:21',
                 'previousBuild'  => 3,
-            ]
+            ],
         ];
 
         $build = new Build();
@@ -104,6 +107,7 @@ class BuildStatusServiceTest extends TestCase
     /**
      * @param null|int $prevBuildId
      * @param bool $setProject
+     *
      * @return Project
      */
     protected function getProjectMock($prevBuildId = null, $setProject = true)
@@ -158,7 +162,7 @@ class BuildStatusServiceTest extends TestCase
                     'lastBuildStatus' => '',
                     'lastBuildTime'   => '',
                     'webUrl'          => 'http://php-censor.local/build/view/77',
-                ]
+                ],
             ],
             'buildingStatusWithPrev' => [
                 2,
@@ -169,7 +173,7 @@ class BuildStatusServiceTest extends TestCase
                     'lastBuildStatus' => 'Failure',
                     'lastBuildTime'   => '2014-10-13T13:13:13+0000',
                     'webUrl'          => 'http://php-censor.local/build/view/78',
-                ]
+                ],
             ],
             'successStatus' => [
                 3,
@@ -180,7 +184,7 @@ class BuildStatusServiceTest extends TestCase
                     'lastBuildStatus' => 'Success',
                     'lastBuildTime'   => '2014-10-25T21:50:02+0000',
                     'webUrl'          => 'http://php-censor.local/build/view/7',
-                ]
+                ],
             ],
             'failureStatus' => [
                 4,
@@ -191,7 +195,7 @@ class BuildStatusServiceTest extends TestCase
                     'lastBuildStatus' => 'Failure',
                     'lastBuildTime'   => '2014-10-13T13:13:13+0000',
                     'webUrl'          => 'http://php-censor.local/build/view/13',
-                ]
+                ],
             ],
             'pending' => [
                 5,
@@ -202,7 +206,7 @@ class BuildStatusServiceTest extends TestCase
                     'lastBuildStatus' => 'Success',
                     'lastBuildTime'   => '2014-10-25T21:50:02+0000',
                     'webUrl'          => 'http://php-censor.local/build/view/1000',
-                ]
+                ],
             ],
         ];
     }

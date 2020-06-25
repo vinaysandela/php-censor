@@ -21,9 +21,9 @@ class Model
      */
     public function __construct(array $initialData = [])
     {
-        if (is_array($initialData)) {
+        if (\is_array($initialData)) {
             foreach ($initialData as $index => $item) {
-                if (array_key_exists($index, $this->data)) {
+                if (\array_key_exists($index, $this->data)) {
                     $this->data[$index] = $item;
                 }
             }
